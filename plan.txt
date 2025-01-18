@@ -5,15 +5,35 @@
 메인에 세워둔 캐릭터는 포만도가 닳음
 게임시 체력이 닳음
 메인에 빼둔 캐릭터는 체력이 차오름. 포만감은 그대로.
+개인실에서 불꺼두면 체력 참
+
 
 포만도는 아무 의미 없음 포만도 낮을때 음식 주면 호감도+
 
-
 구현할것:
 
-1. 방향으로 배경 전환(바깥/침실/식당) 	0116 O
-2. 방향으로 UI 전환				
-3. 탑바 포만감/체력 게이지 - 슬라이더? https://velog.io/@apuyo821/Use-Slider-to-make-HPBar
+1. 방향으로 배경 전환(대기실/침실/식당) 	0116 O
+2. 방향으로 UI 전환				0117 O
+	ㄴ 바깥: 	나가기(산책) | 작업 | -
+	ㄴ 개인실: 	옷장 | 불끄기 | 방꾸
+	ㄴ 식당:	냉장고 | < 밥 > | 
+
+	: 스크롤매니저에서 ui 교체 > ui매니저에서 버튼이벤트 실행
+		
+3. 탑바 포만감/체력 게이지 - 슬라이더? 
 4. 탑바 캐릭터 선택
 5. 냉장고 팝업
 6. 밥먹이기 -> 호감도 업
+
+7. 파이어베이스 연동 https://learn-and-give.tistory.com/118	- 일단 연동은 함(lsy010117@yu.ac.kr)
+	ㄴ 저장: https://firebase.google.com/docs/database/unity/save-data?hl=ko#saving_data
+	ㄴ 검색: https://firebase.google.com/docs/database/unity/retrieve-data?hl=ko#retrieving_data_2
+7.1. 구글로그인
+7.2. 데이터 백업
+7.3. 멀티게임
+
+8. 일단 파이어베이스는 두고 json으로 데이터 받는거나 하자.
+
+
+
+

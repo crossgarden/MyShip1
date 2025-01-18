@@ -161,7 +161,9 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
+    Android: com.soyun.MyShip
     Standalone: com.DefaultCompany.2DProject
+    iPhone: com.soyun.MyShip
   buildNumber:
     Standalone: 0
     VisionOS: 0

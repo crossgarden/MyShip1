@@ -13,6 +13,13 @@
 [Ll]ogs/
 [Uu]ser[Ss]ettings/
 
+# 파이어베이스 패키지 같은데 아닐수도 있음... 용량 때문에 안올라가서 일단 제외
+Firebase/
+ExternalDependencyManager/
+Editor Default Resources/
+Plugins/
+StreamingAssets/
+
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
 /[Mm]emoryCaptures/
