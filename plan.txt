@@ -22,8 +22,9 @@
 		
 3. 탑바 포만감/체력 게이지 - 슬라이더? 
 4. 탑바 캐릭터 선택
-5. 냉장고 팝업
-6. 밥먹이기 -> 호감도 업
+5. 냉장고 팝업	0118 O
+6. 밥먹이기 -> 호감도 업	300~800 520~1150
+	// 일단 호감도 같이 캐릭터 요소는 나중에 하고 음식 우선.
 
 7. 파이어베이스 연동 https://learn-and-give.tistory.com/118	- 일단 연동은 함(lsy010117@yu.ac.kr)
 	ㄴ 저장: https://firebase.google.com/docs/database/unity/save-data?hl=ko#saving_data
@@ -34,6 +35,16 @@
 
 8. 일단 파이어베이스는 두고 json으로 데이터 받는거나 하자.
 
+
+
+0109
+FoodItem > GameManager > SelectedFood 쪽 다시 보기 데이터 흐름 위주로
+
+
+0120
+food 데이터 걍 유저쪽에 몰아넣자...
+
+> 할 거 : foodChange 쪽 고민해봐야 할듯... load와 view를 분리 하는건? O
 
 
 

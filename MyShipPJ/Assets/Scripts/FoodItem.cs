@@ -1,32 +1,43 @@
 using System.Collections;
 using System.Collections.Generic;
+using GameData;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class FoodItem : MonoBehaviour
 {
+
+    public Food food;
+    public int havingFoodIndex;
+
     string path = "Sprites/Items/Foods/";
     public Image img;
-    public TextMeshProUGUI countTxt, FullnessTxt, favorTxt, descript; // descript는 나중에 꾹 누르면 말풍선 팝업으로 뜨게
+    public TextMeshProUGUI countTxt, FullnessTxt, favorTxt, descript; // 추가 - descript는 나중에 꾹 누르면 말풍선 팝업으로 뜨게
 
-    public void SetUI(string name, string count, string fullness, string favor, string descript){
+    // UIManager.refrigeratorAction()에서 냉장고 스크롤뷰 컨텐츠 아이템 동적 추가시 사용.
+    public void SetUI(Food food, int havingFoodIndex)
+    {
+        this.food = food;
+        this.havingFoodIndex = havingFoodIndex;
+        
+        this.countTxt.text = "x" + food.count;
+        this.FullnessTxt.text = food.fullness.ToString();
+        this.favorTxt.text = food.favor.ToString();
+        this.descript.text = food.descript.ToString();
 
-        this.countTxt.text = "x" + count;
-        this.FullnessTxt.text = fullness;
-        this.favorTxt.text = favor;
-        this.descript.text = descript;
         print("path" + path);
-        img.sprite = Resources.Load<Sprite>(path+name);
-    }
-    
-    void Start()
-    {
-        
+        img.sprite = Resources.Load<Sprite>(path + food.name);
     }
 
-    void Update()
+    public void ViewDescriptionAction()
     {
-        
+
+    }
+
+    public void SelectFoodAction()
+    {
+        // 동적 추가라 이미 계층뷰에 있는 selectedFood를 참조할 수 없어서 GameManger 활용
+        GameManager.instance.SelectFoodAction(food, havingFoodIndex);
     }
 }

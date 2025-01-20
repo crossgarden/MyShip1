@@ -5,16 +5,23 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    public UserData userData;
-    public SystemData systemData;
+    // Room 2 식당
+    public GameObject refrigeratorPanel;
+    public GameObject foodShopPanel;
 
-    public GameObject RefrigeratorPanel;
-    public GameObject refrigeratorContent;
-    public GameObject foodItemPrefab;
-    
-    private void Start() {
-        userData = DataManager.instance.userData;
-        systemData = DataManager.instance.systemData;
+    private void Start()
+    {
+
+    }
+
+    public void OpenPopUP(GameObject popupPanel)
+    {
+        popupPanel.SetActive(true);
+    }
+
+    public void ClosePopUp(GameObject popupPanel)
+    {
+        popupPanel.SetActive(false);
     }
 
     // Room 0 - 대기실
@@ -44,24 +51,17 @@ public class UIManager : MonoBehaviour
         print("RoomDecoAction");
     }
 
-    // Room 2 - 식당 
-    public void refrigeratorAction()
+    // [1-2] Room 2 - 식당 
+    // 1. 냉장고 열기 액션
+    public void RefrigeratorAction()
     {
-        for(int i = 0; i < userData.food.Length ; i++){
-
-            GameObject food = Instantiate(foodItemPrefab, transform.position, Quaternion.identity);
-            food.name = userData.food[i].name;
-            FoodItem foodItem = food.GetComponent<FoodItem>();
-            foodItem.SetUI(food.name, userData.food[i].count.ToString(), "","","");
-
-            food.transform.SetParent(refrigeratorContent.transform, false);
-            food.SetActive(true);
-        }
-        RefrigeratorPanel.SetActive(true);
+        refrigeratorPanel.SetActive(true);
     }
 
-    public void FeedAction()
+    // 2. food shop 열기 액션
+    public void FoodShopAction()
     {
-        print("FeedAction");
+        foodShopPanel.SetActive(true);
     }
+
 }

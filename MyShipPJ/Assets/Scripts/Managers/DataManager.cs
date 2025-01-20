@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,7 +15,7 @@ public class DataManager : MonoBehaviour
 
     public string userId;
     public UserData userData;
-    public SystemData systemData;
+    // public SystemData systemData;
 
     // firebase
     private DatabaseReference dbref;
@@ -38,9 +37,9 @@ public class DataManager : MonoBehaviour
         }
 
         userData = new UserData();
-        systemData = new SystemData();
+        // systemData = new SystemData();
 
-        path = Application.persistentDataPath;
+        path = Application.persistentDataPath + "\\";
     }
 
     void Start()
@@ -59,16 +58,18 @@ public class DataManager : MonoBehaviour
     public void loadData()
     {
         // userData 로드 
-        string jsonData = File.ReadAllText(path + "\\userData.json");
-        print(jsonData);
-        userData = JsonUtility.FromJson<UserData>(jsonData);
+        string userJson = File.ReadAllText(path + "userData.json");
+        userData = JsonUtility.FromJson<UserData>(userJson);
+
+        // systemData 로드
+        // string systemJson = File.ReadAllText(path + "systemData.json");
+        // systemData = JsonUtility.FromJson<SystemData>(systemJson);
     }
 
     public void saveData()
     {
-        // userData 저장
-        string jsonData = JsonUtility.ToJson(userData, true);
-        File.WriteAllText(path + "\\userData.json", jsonData);
+        File.WriteAllText(path + "userData.json", JsonUtility.ToJson(userData, true));
+        // File.WriteAllText(path + "systemData.json",JsonUtility.ToJson(systemData, true));
     }
 
     // 파이어베이스
@@ -100,5 +101,22 @@ public class DataManager : MonoBehaviour
 
     }
 
+    // 1~3. 음식 주기
+    // 1. count 1 이상 food 리스트 반환
+    public List<Food> LoadHavingFoods()
+    {
+        List<Food> havingFoods = new List<Food>();
+        for (int i = 0; i < DataManager.instance.userData.foods.Count; i++)
+        {
+            if (DataManager.instance.userData.foods[i].count > 0)
+                havingFoods.Add(DataManager.instance.userData.foods[i]);
+        }
+        return havingFoods;
+    }
+
+    // 2. food 소모
+    public List<Food> FeedFoodCounting(int index){
+        return null;
+    }
 
 }

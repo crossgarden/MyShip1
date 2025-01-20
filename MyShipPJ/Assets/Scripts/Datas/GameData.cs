@@ -1,27 +1,36 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+
 namespace GameData
 {
     [Serializable]
-    public struct UserData
+    public class UserData
     {
-        public UserFood[] food;
+        public int ship_level;
+        public List<Food> foods;
+        public List<Character> characters;
 
         override
         public string ToString()
         {
             string foodStr = "";
-            for(int i = 0; i < food.Length ; i++){
-                foodStr += food[i].ToString();
+            for(int i = 0; i < foods.Count ; i++){
+                foodStr += foods[i].ToString();
             }
-            return string.Format("food: {0}", foodStr);
+            return string.Format("foods: {0}", foodStr);
         }
     }
 
     [Serializable]
-    public struct UserFood
+    public class Food
     {
         public string name;
+        public string kr_name;
+        public int cost;
+        public int fullness;
+        public int favor;
+        public string descript;
         public int count;
 
         override
@@ -31,25 +40,23 @@ namespace GameData
         }
     }
 
-    // 시스템 데이터
-    public struct SystemData
+    [Serializable]
+    public class Character
     {
-        public FoodInfo[] foodInfos;
-    }
-
-    public struct FoodInfo
-    {
-        public int id;
         public string name;
-        public string descript;
-        public string imgPath;
+        public string kr_name;
+        public int cost;
+        public int level;
+        public int favor;
+        public int fullness;
+        public int locked;
+        public string[] script;
+
+        override
+        public string ToString()
+        {
+            return string.Format("{0}: {1}\n", name, favor);
+        }
     }
 
-    // public struct Characters{
-    //     public int YouJay;
-    // }
-
-    // public struct Character{
-
-    // }
 }
