@@ -4,12 +4,17 @@ using UnityEngine;
 
 namespace GameData
 {
+    public enum SFXClip { NONE=-1, FAIL, EATTING, SLIDE, BUY, CLICK, MAX }
+    public enum BGMClip { NONE=-1, MAX }
+
     [Serializable]
     public class UserData
     {
         public int ship_level;
+        public int coin;
         public List<Food> foods;
         public List<Character> characters;
+        public int[] favor_max;
 
         override
         public string ToString()
@@ -50,12 +55,13 @@ namespace GameData
         public int favor;
         public int fullness;
         public int locked;
+        public string introduction;
         public string[] script;
 
         override
         public string ToString()
         {
-            return string.Format("{0}: {1}\n", name, favor);
+            return string.Format("{0}: {1}\n", name, level);
         }
     }
 

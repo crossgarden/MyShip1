@@ -186,8 +186,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 83, y: -99}
-  m_SizeDelta: {x: 106.3652, y: 64.087}
+  m_AnchoredPosition: {x: 54.759926, y: -100.008545}
+  m_SizeDelta: {x: 162.8454, y: 66.1041}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5802678564599954005
 CanvasRenderer:
@@ -217,7 +217,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: x5
+  m_text: x999
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b135911baf38c50418f7faaa9a8d6e9d, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 9c92ae370082aa741b185cfc32d0ea7b, type: 2}
@@ -244,14 +244,14 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 57.1
-  m_fontSizeBase: 57.1
+  m_fontSize: 49.02
+  m_fontSizeBase: 49.02
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 4.3
@@ -857,20 +857,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e91c80ed5775a124983af5452b84af9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  userFood:
-    id: 0
-    count: 0
-  foodInfo:
-    id: 0
+  food:
     name: 
     kr_name: 
     cost: 0
     fullness: 0
     favor: 0
     descript: 
-  foodIndex: 0
-  selectedFood: {fileID: 0}
-  selectedFoodTxt: {fileID: 0}
+    count: 0
+  havingFoodIndex: 0
   img: {fileID: 577750358386715765}
   countTxt: {fileID: 374420031685944518}
   FullnessTxt: {fileID: 3115961773244964831}

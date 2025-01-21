@@ -10,12 +10,12 @@ using System.IO;
 
 public class DataManager : MonoBehaviour
 {
-
     public static DataManager instance;
 
     public string userId;
     public UserData userData;
-    // public SystemData systemData;
+    
+    public List<Food> havingFoods;
 
     // firebase
     private DatabaseReference dbref;
@@ -46,7 +46,7 @@ public class DataManager : MonoBehaviour
     {
         // FirebaseInit();
         loadData();
-        print(userData.ToString());
+        LoadHavingFoods();
     }
 
     void Update()
@@ -103,15 +103,14 @@ public class DataManager : MonoBehaviour
 
     // 1~3. 음식 주기
     // 1. count 1 이상 food 리스트 반환
-    public List<Food> LoadHavingFoods()
+    public void LoadHavingFoods()
     {
-        List<Food> havingFoods = new List<Food>();
+        havingFoods = new List<Food>();
         for (int i = 0; i < DataManager.instance.userData.foods.Count; i++)
         {
             if (DataManager.instance.userData.foods[i].count > 0)
                 havingFoods.Add(DataManager.instance.userData.foods[i]);
         }
-        return havingFoods;
     }
 
     // 2. food 소모

@@ -52,18 +52,25 @@ public class ScrollManager : MonoBehaviour
     // room 체인지 버튼 이벤트
     public void MoveRoomAction(int next) // next: 1, pre: -1
     {
+        if(curRoom + next < 0 || curRoom + next >= backgrounds.Count)
+            return;
+
+        AudioManager.instance.PlaySFX(GameData.SFXClip.SLIDE);
         curRoom = Mathf.Clamp(curRoom + next, 0, backgrounds.Count - 1);
-        PlayerPrefs.SetInt("CurRoom",curRoom);
+        PlayerPrefs.SetInt("CurRoom", curRoom);
         needUIChange = true;
+        
     }
 
     public void BottomBarUIChange()
     {
-        for(int i = 0; i < roomCount ; i++){
+        for (int i = 0; i < roomCount; i++)
+        {
             leftBotUI[i].SetActive(false);
             midBotUI[i].SetActive(false);
             rightBotUI[i].SetActive(false);
         }
+        
         leftBotUI[curRoom].SetActive(true);
         midBotUI[curRoom].SetActive(true);
         rightBotUI[curRoom].SetActive(true);

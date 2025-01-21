@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using GameData;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,24 +12,29 @@ public class SelectedFood : MonoBehaviour
     public TextMeshProUGUI foodTxt;
 
     public Food food;
-    public List<Food> foods;
     public List<Food> havingFoods;
     public int havingFoodIndex;
 
     private void Start()
     {
-        initPos = transform.position;
-        havingFoods = DataManager.instance.LoadHavingFoods();
+        havingFoods = DataManager.instance.havingFoods;
+        InitFood();
+    }
 
-        havingFoodIndex = PlayerPrefs.GetInt("SelectedFood", -1);
-        if (havingFoodIndex != -1 && havingFoods.Count > 0)
+    // 음식 초기화
+    public void InitFood()
+    {
+        initPos = transform.position;
+        havingFoodIndex = PlayerPrefs.GetInt("SelectedFood", 0);
+
+        if (havingFoods.Count > 0)
         {
             food = havingFoods[havingFoodIndex];
             gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/Items/Foods/" + food.name);
             foodTxt.text = food.kr_name + " x" + food.count;
         }
         else
-        {  // 테스트 안해봄
+        {
             gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/Items/Foods/null");
             foodTxt.text = null;
         }
@@ -48,9 +52,9 @@ public class SelectedFood : MonoBehaviour
 
         havingFoodIndex += direction;
 
-        if(havingFoodIndex == -1)
-            havingFoodIndex = havingFoods.Count-1;
-        if(havingFoodIndex >= havingFoods.Count)
+        if (havingFoodIndex == -1)
+            havingFoodIndex = havingFoods.Count - 1;
+        if (havingFoodIndex >= havingFoods.Count)
             havingFoodIndex = 0;
 
         food = havingFoods[havingFoodIndex];
@@ -77,9 +81,12 @@ public class SelectedFood : MonoBehaviour
             return;
 
         Vector3 pos = Input.mousePosition;
-        if (pos.x > 300 && pos.x < 850 && pos.y > 550 && pos.y < 1150)  // 수정 - 좌표 이렇게 하드코딩 해도 되나?
+        if (GameManager.instance.curCharacter.fullness < 100
+                && pos.x > 300 && pos.x < 850 && pos.y > 550 && pos.y < 1150)  // 수정 - 좌표 이렇게 하드코딩 해도 되나?
         {
-            print("골인");
+            // 사운드
+            AudioManager.instance.PlaySFX(SFXClip.EATTING);
+
             foreach (Food f in DataManager.instance.userData.foods)
             {
                 if (f == food)
@@ -90,10 +97,10 @@ public class SelectedFood : MonoBehaviour
             }
 
             DataManager.instance.saveData();
-            havingFoods = DataManager.instance.LoadHavingFoods();
+            DataManager.instance.LoadHavingFoods();
 
             GameManager.instance.FoodChange();
-            
+
             // 먹인 후
             gameObject.SetActive(false);
 
@@ -105,12 +112,14 @@ public class SelectedFood : MonoBehaviour
             gameObject.transform.position = initPos;
             gameObject.SetActive(true);
 
-            /** 
-                현재 캐릭터의 fullness, favor + // 나중에 추가. 일단 음식 관련만.
-            */
+            // 데이터 갱신
+            GameManager.instance.CharacterFavorUp(food.favor);
+            GameManager.instance.CharacterFullnessUp(food.fullness);
         }
         else
         {
+            print("실패");
+            AudioManager.instance.PlaySFX(SFXClip.FAIL);
             gameObject.transform.position = initPos;
         }
     }
