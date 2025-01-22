@@ -101,8 +101,7 @@ public class DataManager : MonoBehaviour
 
     }
 
-    // 1~3. 음식 주기
-    // 1. count 1 이상 food 리스트 반환
+    // count 1 이상 food 리스트 반환 - SelecetedFood.cs 에서 사용
     public void LoadHavingFoods()
     {
         havingFoods = new List<Food>();
@@ -113,9 +112,5 @@ public class DataManager : MonoBehaviour
         }
     }
 
-    // 2. food 소모
-    public List<Food> FeedFoodCounting(int index){
-        return null;
-    }
 
 }

@@ -54,7 +54,9 @@ namespace GameData
         public int level;
         public int favor;
         public int fullness;
+        public int energy;
         public int locked;
+        public string unlockDate;
         public string introduction;
         public string[] script;
 

@@ -26,7 +26,6 @@ public class FoodItem : MonoBehaviour
         this.favorTxt.text = food.favor.ToString();
         this.descript.text = food.descript.ToString();
 
-        print("path" + path);
         img.sprite = Resources.Load<Sprite>(path + food.name);
     }
 

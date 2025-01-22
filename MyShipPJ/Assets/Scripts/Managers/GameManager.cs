@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using GameData;
@@ -11,6 +12,8 @@ public class GameManager : MonoBehaviour
 
     public Character curCharacter;
     public GameObject[] Characters;
+    public float decayRateFullness = 108f; // 초당 감소율. 108: 3시간동안 100 > 0
+    private DateTime offTime;
 
     /************ UI ***********/
     public TextMeshProUGUI coinTxt;
@@ -49,6 +52,9 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         CharacterInit();
+        InitFullness();
+        StartCoroutine(DecayFullness());
+
         FoodChange();
         SetFavorUI();
         SetFullnessUI();
@@ -56,8 +62,45 @@ public class GameManager : MonoBehaviour
     }
 
     /** [ - ] 시스템 */
+    /** 1. 시간에 따른 메인 캐릭터의 포만도 감소 */
+    IEnumerator DecayFullness()
+    {
+        while (curCharacter.fullness > 0)
+        {
+            yield return new WaitForSecondsRealtime(decayRateFullness);
+            int index = PlayerPrefs.GetInt("CurCharacter", 0);
+            curCharacter = DataManager.instance.userData.characters[index];
 
-    /** [1-5] character */
+            curCharacter.fullness -= 1;
+            DataManager.instance.saveData();
+            SetFullnessUI();
+        }
+    }
+
+    /** 2. 백그라운드에서 감소를 위한 종료시 현재시간 저장(scence 전환시에도 필요하나?) */
+    void OnApplicationQuit()
+    {
+        // 종료 시 현재 시간을 저장
+        PlayerPrefs.SetString("OffTime", DateTime.Now.ToString());
+        PlayerPrefs.Save();
+    }
+
+    /** 3. 첫 실행 시 백그라운드 감소량 적용 */
+    void InitFullness()
+    {
+        if (PlayerPrefs.HasKey("OffTime"))
+        {
+            offTime = DateTime.Parse(PlayerPrefs.GetString("OffTime"));
+
+            TimeSpan timeDifference = DateTime.Now - offTime;
+            float elapsedTime = (float)timeDifference.TotalSeconds;
+
+            curCharacter.fullness = Mathf.Max(curCharacter.fullness - (int)(elapsedTime * decayRateFullness), 0); ;
+            DataManager.instance.saveData();
+        }
+    }
+
+    /*********** [1-5] character ***********************************************************/
     /** 1. 캐릭터 초기화 */
     public void CharacterInit()
     {
@@ -94,7 +137,7 @@ public class GameManager : MonoBehaviour
         SetFavorUI();
     }
 
-     /** 4. 포만도 UI 업데이트 */
+    /** 4. 포만도 UI 업데이트 */
     public void SetFullnessUI()
     {
         fullenssSlider.value = GameManager.instance.curCharacter.fullness;
@@ -105,7 +148,7 @@ public class GameManager : MonoBehaviour
         else if (fullenssSlider.value < 100)
             fullnessImg.color = Color.green;
         else
-            fullnessImg.color = new Color(64/255f,149/255f,255/255f);
+            fullnessImg.color = new Color(64 / 255f, 149 / 255f, 255 / 255f);
     }
 
     /** 5. 포만도 업 */
@@ -117,16 +160,19 @@ public class GameManager : MonoBehaviour
     }
 
     /** 6. coin 세팅 */
-    public void SetCoinUI(){
+    public void SetCoinUI()
+    {
         int coin = DataManager.instance.userData.coin;
         string txt = coin.ToString();
-        if(coin >= 1000){
-            txt = coin/1000 + "K";
-        } 
+        if (coin >= 1000)
+        {
+            txt = coin / 1000 + "K";
+        }
         coinTxt.text = txt;
     }
 
-    /** [1-4] food */
+
+    /*********** [1-4] food ***********************************************************/
     /** 1. food 내용 변경시 냉장고, 상점 데이터 리로드 */
     public void FoodChange()
     {
@@ -154,7 +200,7 @@ public class GameManager : MonoBehaviour
             GameObject food = Instantiate(foodItemPrefab, transform.position, Quaternion.identity);
             FoodItem foodItem = food.GetComponent<FoodItem>();
 
-            food.name = name;
+            food.name = foods[i].name;
             foodItem.SetUI(foods[i], i);
 
             food.transform.SetParent(refrigeratorContent.transform, false);
@@ -180,7 +226,7 @@ public class GameManager : MonoBehaviour
             GameObject food = Instantiate(foodShopItemPrefab, transform.position, Quaternion.identity);
             FoodShopItem foodShopItem = food.GetComponent<FoodShopItem>();
 
-            food.name = name;
+            food.name = foods[i].name;
             foodShopItem.SetUI(foods[i]);
 
             food.transform.SetParent(foodShopContent.transform, false);

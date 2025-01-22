@@ -34,7 +34,6 @@ public class FoodShopItem : MonoBehaviour
         if (food.cost > DataManager.instance.userData.coin)
             buyBtn.interactable = false;
 
-        print("path" + path);
         img.sprite = Resources.Load<Sprite>(path + food.name);
     }
 

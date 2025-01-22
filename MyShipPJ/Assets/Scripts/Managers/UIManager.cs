@@ -6,6 +6,10 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+    public GameObject CharacterListPanel;
+    public GameObject characterListContent;
+    public GameObject CharacterCardPrefab;
+    
     // Room 2 식당
     public GameObject refrigeratorPanel;
     public GameObject foodShopPanel;
@@ -26,6 +30,29 @@ public class UIManager : MonoBehaviour
     {
         AudioManager.instance.PlaySFX(SFXClip.CLICK);
         popupPanel.SetActive(false);
+    }
+
+    /** 캐릭터 리스트 UI 세팅 */
+    public void LoadCharacterList()
+    {
+        List<Character> characters = DataManager.instance.userData.characters;
+
+        // 캐릭터 카드 추가
+        for (int i = 0; i < characters.Count; i++)
+        {
+            GameObject characterCard = Instantiate(CharacterCardPrefab, transform.position, Quaternion.identity);
+            CharacterCard cardScript = characterCard.GetComponent<CharacterCard>();
+            characterCard.name = characters[i].name;
+            cardScript.SetUI(characters[i], i);
+
+            characterCard.transform.SetParent(characterListContent.transform, false);
+            characterCard.SetActive(true);
+        }
+    }
+
+    public void CharacterListAction(){
+        LoadCharacterList();
+        CharacterListPanel.SetActive(true);
     }
 
     // Room 0 - 대기실
@@ -79,7 +106,8 @@ public class UIManager : MonoBehaviour
         selectedFood.GetComponent<SelectedFood>().foodTxt.text = selectedFood.GetComponent<SelectedFood>().food.kr_name + " x" + selectedFood.GetComponent<SelectedFood>().food.count;
     }
 
-    public void BackToRefrigeratorAction(){
+    public void BackToRefrigeratorAction()
+    {
         CloseFoodShopAction();
         RefrigeratorAction();
     }
