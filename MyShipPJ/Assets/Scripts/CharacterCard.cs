@@ -11,13 +11,10 @@ public class CharacterCard : MonoBehaviour
     string path = "Sprites/Characters/";
     public Image image, selectedChecked;
     public TextMeshProUGUI nameTxt, dateTxt, introTxt, levelTxt;
+    public Transform scriptContainer;
     public Slider fullnessSlider, energySlider;
-    public GameObject scriptContainer, scriptPanelPrefab;
+    public Image fullnessFill, energyFill;
 
-    void Start()
-    {
-
-    }
 
     public void SetUI(Character character, int index)
     {
@@ -27,31 +24,36 @@ public class CharacterCard : MonoBehaviour
         // else
         //     this.selectedChecked.sprite = Resources.Load<Sprite>(path + "unchecked"); // 아직 이미지 안만듦
         this.nameTxt.text = character.kr_name;
-        this.dateTxt.text = "획득일: " + character.unlockDate;
         this.introTxt.text = character.introduction;
         this.levelTxt.text = character.level.ToString();
         this.fullnessSlider.value = character.fullness;
         this.energySlider.value = character.energy;
+        UIManager.instance.SetSliderFillColor(fullnessSlider, fullnessFill);
+        UIManager.instance.SetSliderFillColor(energySlider, energyFill);
+
+        if(character.locked == 0)
+        {
+            this.dateTxt.text = "획득일: " + character.unlockDate;
+        }else{
+            dateTxt.text = "획득일: " + "-";
+        }
 
         for (int i = 0; i < character.script.Length; i++)
         {
-            GameObject scriptPanel = Instantiate(scriptPanelPrefab, transform.position, Quaternion.identity);
-            scriptPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Lv" + (i + 1) + " ▶";
-
+            scriptContainer.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = "Lv" + (i + 1) + " ▶";
             if (character.level > i)
-                scriptPanel.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = character.script[i];
+                scriptContainer.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = character.script[i];
             else
             {
-                scriptPanel.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "레벨 " + (i + 1) + "달성 시 열람 가능.";
-                scriptPanel.transform.GetChild(1).GetComponent<TextMeshProUGUI>().color = new Color(255 / 255f, 111 / 255f, 111 / 255f);
+                scriptContainer.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = "레벨 " + (i + 1) + "달성 시 열람 가능.";
+                scriptContainer.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().color = new Color(255 / 255f, 111 / 255f, 111 / 255f);
             }
-
-            scriptPanel.transform.SetParent(scriptContainer.transform, false);
         }
     }
 
-    void Update()
-    {
-
+    public void CharacterChange(){
+        print("캐릭터 선택");
+        AudioManager.instance.PlaySFX(SFXClip.CLICK);
+        UIManager.instance.CharacterChange(character);
     }
 }

@@ -12,13 +12,13 @@ public class CharacterListScroll : MonoBehaviour, IBeginDragHandler, IDragHandle
     float distance;
     float[] pos;
     public int curPos, targetPos;
-    bool isDrag;
+    public bool isDrag;
 
     public Transform contentTransform;
 
     void Start()
     {
-        characterCount = DataManager.instance.userData.characters.Count;
+        characterCount = DataManager.instance.characterSotred.Count;
         pos = new float[characterCount];
 
         // 거리에 따라 0~1인 pos 대입

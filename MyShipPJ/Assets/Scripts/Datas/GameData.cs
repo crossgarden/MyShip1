@@ -7,6 +7,8 @@ namespace GameData
     public enum SFXClip { NONE=-1, FAIL, EATTING, SLIDE, BUY, CLICK, MAX }
     public enum BGMClip { NONE=-1, MAX }
 
+    public enum RoomNum { WAITTING, PRIVATE, RESTAURANT, MAX }
+
     [Serializable]
     public class UserData
     {

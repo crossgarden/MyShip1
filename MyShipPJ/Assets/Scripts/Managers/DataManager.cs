@@ -7,6 +7,8 @@ using Firebase.Extensions;
 
 using GameData;
 using System.IO;
+using System.Linq;
+using System;
 
 public class DataManager : MonoBehaviour
 {
@@ -16,6 +18,7 @@ public class DataManager : MonoBehaviour
     public UserData userData;
     
     public List<Food> havingFoods;
+    public List<Character> characterSotred;
 
     // firebase
     private DatabaseReference dbref;
@@ -47,6 +50,7 @@ public class DataManager : MonoBehaviour
         // FirebaseInit();
         loadData();
         LoadHavingFoods();
+        CharacterSort();
     }
 
     void Update()
@@ -70,6 +74,27 @@ public class DataManager : MonoBehaviour
     {
         File.WriteAllText(path + "userData.json", JsonUtility.ToJson(userData, true));
         // File.WriteAllText(path + "systemData.json",JsonUtility.ToJson(systemData, true));
+    }
+
+    public void CharacterSort(){
+        characterSotred = userData.characters
+                            .OrderBy(c => c.locked) // Locked == 0인 요소가 앞에 오도록
+                            .ThenBy(c => c.locked == 0 ? DateTime.Parse(c.unlockDate) : DateTime.MaxValue) // Locked == 0인 경우 Date로 정렬
+                            .ToList();
+        foreach(Character ch in characterSotred){
+            print(ch.ToString());
+        }
+    }
+
+     // count 1 이상 food 리스트 반환 - SelecetedFood.cs 에서 사용
+    public void LoadHavingFoods()
+    {
+        havingFoods = new List<Food>();
+        for (int i = 0; i < DataManager.instance.userData.foods.Count; i++)
+        {
+            if (DataManager.instance.userData.foods[i].count > 0)
+                havingFoods.Add(DataManager.instance.userData.foods[i]);
+        }
     }
 
     // 파이어베이스
@@ -101,16 +126,6 @@ public class DataManager : MonoBehaviour
 
     }
 
-    // count 1 이상 food 리스트 반환 - SelecetedFood.cs 에서 사용
-    public void LoadHavingFoods()
-    {
-        havingFoods = new List<Food>();
-        for (int i = 0; i < DataManager.instance.userData.foods.Count; i++)
-        {
-            if (DataManager.instance.userData.foods[i].count > 0)
-                havingFoods.Add(DataManager.instance.userData.foods[i]);
-        }
-    }
-
+   
 
 }

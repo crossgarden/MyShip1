@@ -15,10 +15,17 @@ public class SelectedFood : MonoBehaviour
     public List<Food> havingFoods;
     public int havingFoodIndex;
 
+    public Vector3 goalPosMin;
+    public Vector3 goalPosMax;
+
     private void Start()
     {
         havingFoods = DataManager.instance.havingFoods;
         InitFood();
+
+        goalPosMin = Camera.main.ViewportToWorldPoint(new Vector3(0.29f, 0.35f, 0));
+        goalPosMax = Camera.main.ViewportToWorldPoint(new Vector3(0.70f, 0.65f, 0));
+
     }
 
     // 음식 초기화
@@ -71,7 +78,10 @@ public class SelectedFood : MonoBehaviour
     {
         if (havingFoods.Count == 0)
             return;
-        gameObject.transform.position = Input.mousePosition;
+
+        Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        pos.z = 0;
+        gameObject.transform.position = pos;
     }
 
     // 2. 음식 주기
@@ -79,10 +89,10 @@ public class SelectedFood : MonoBehaviour
     {
         if (havingFoods.Count == 0)
             return;
-
-        Vector3 pos = Input.mousePosition;
-        if (GameManager.instance.curCharacter.fullness < 100
-                && pos.x > 300 && pos.x < 850 && pos.y > 550 && pos.y < 1150)  // 수정 - 좌표 이렇게 하드코딩 해도 되나?
+        
+        Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        print(Camera.main.WorldToViewportPoint(pos));
+        if (pos.x > goalPosMin.x && pos.x < goalPosMax.x && pos.y > goalPosMin.y && pos.y < goalPosMax.y)  // 수정 - 좌표 이렇게 하드코딩 해도 되나?
         {
             // 사운드
             AudioManager.instance.PlaySFX(SFXClip.EATTING);
@@ -99,7 +109,7 @@ public class SelectedFood : MonoBehaviour
             DataManager.instance.saveData();
             DataManager.instance.LoadHavingFoods();
 
-            GameManager.instance.FoodChange();
+            UIManager.instance.FoodChange();
 
             // 먹인 후
             gameObject.SetActive(false);
@@ -113,12 +123,13 @@ public class SelectedFood : MonoBehaviour
             gameObject.SetActive(true);
 
             // 데이터 갱신
-            GameManager.instance.CharacterFavorUp(food.favor);
-            GameManager.instance.CharacterFullnessUp(food.fullness);
+            UIManager.instance.CharacterFavorUp(food.favor);
+            UIManager.instance.CharacterFullnessUp(food.fullness);
+            UIManager.instance.UpdateCurCharacter();
+
         }
         else
         {
-            print("실패");
             AudioManager.instance.PlaySFX(SFXClip.FAIL);
             gameObject.transform.position = initPos;
         }

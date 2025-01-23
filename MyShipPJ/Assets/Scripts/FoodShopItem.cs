@@ -43,7 +43,7 @@ public class FoodShopItem : MonoBehaviour
         DataManager.instance.userData.coin -= food.cost;
         food.count += 1;
         countTxt.text = "x" + food.count.ToString();
-        GameManager.instance.SetCoinUI();
+        UIManager.instance.SetCoinUI();
     }
 
 }
