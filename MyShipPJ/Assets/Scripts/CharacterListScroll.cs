@@ -45,7 +45,7 @@ public class CharacterListScroll : MonoBehaviour, IBeginDragHandler, IDragHandle
 
         // 절반 거리를 넘지 않아도 마우스를 빠르게 이동하면
         if (eventData.delta.x < -15)
-            targetPos = Mathf.Min(curPos + 1, characterCount-1);
+            targetPos = Mathf.Min(curPos + 1, characterCount - 1);
         else if (eventData.delta.x > 15)
             targetPos = Mathf.Max(curPos - 1, 0);
         else
@@ -62,5 +62,21 @@ public class CharacterListScroll : MonoBehaviour, IBeginDragHandler, IDragHandle
     {
         if (!isDrag)
             scrollbar.value = Mathf.Lerp(scrollbar.value, pos[targetPos], 0.1f);
+    }
+
+    public void CharacterChange()
+    {
+        Vector3 minPos = new Vector3(60f, 75f, 0);
+        Vector3 maxPos = new Vector3(126f, 120f, 0);
+        Vector3 pos = Camera.main.WorldToViewportPoint(Input.mousePosition);
+
+        // if (pos.x > minPos.x || pos.x < maxPos.x || pos.y > minPos.y || pos.y < maxPos.y)   // 이거 수정해야됨 content를 위로 올릴수 있잖아아
+        {
+            AudioManager.instance.PlaySFX(GameData.SFXClip.CLICK);
+            print("선택 캐릭터" + targetPos + " : " + DataManager.instance.characterSotred[targetPos]);
+            
+            GameManager.instance.CharacterChange(targetPos);
+        }
+
     }
 }

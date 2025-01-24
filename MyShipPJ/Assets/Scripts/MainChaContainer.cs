@@ -13,16 +13,17 @@ public class MainChaContainer : MonoBehaviour
 
     void Start()
     {
+        // 캐릭터 프리팹 List에 프리팹 추가
         foreach(Character cha in DataManager.instance.characterSotred)
             characterPrefabs.Add(Resources.Load<GameObject>(path + cha.name));
         
-        GameObject curCharacterObj = Instantiate(characterPrefabs[PlayerPrefs.GetInt("CurCharacter",0)], transform.position, Quaternion.identity);
-        curCharacterObj.transform.SetParent(gameObject.transform, false);
-        curCharacterObj.SetActive(true);
+        ChangeCharacter();
     }
 
     public void ChangeCharacter(){
-        Destroy(gameObject.transform.GetChild(0));
+        if(gameObject.transform.childCount > 0){
+            Destroy(gameObject.transform.GetChild(0).gameObject);
+        }
         
         GameObject curCharacterObj = Instantiate(characterPrefabs[PlayerPrefs.GetInt("CurCharacter",0)], transform.position, Quaternion.identity);
         curCharacterObj.transform.SetParent(gameObject.transform, false);

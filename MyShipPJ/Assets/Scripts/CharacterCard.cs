@@ -51,9 +51,4 @@ public class CharacterCard : MonoBehaviour
         }
     }
 
-    public void CharacterChange(){
-        print("캐릭터 선택");
-        AudioManager.instance.PlaySFX(SFXClip.CLICK);
-        UIManager.instance.CharacterChange(character);
-    }
 }

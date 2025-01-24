@@ -124,18 +124,19 @@ public class GameManager : MonoBehaviour
     {
         PlayerPrefs.SetInt("CurCharacter", index);
         curCharacter = DataManager.instance.characterSotred[index];
+        UIManager.instance.CharacterChangeUI();
     }
 
     /** 2. 캐릭터 교체 - Charater로 */
     public void CharacterChange(Character character)
     {
-        for(int i = 0 ; i < CharactersSorted.Count ; i++){
-            if(CharactersSorted[i] == character){
-                PlayerPrefs.SetInt("CurCharacter", i);
-                curCharacter = DataManager.instance.characterSotred[i];
-                break;
-            }
-        }
+        // for(int i = 0 ; i < CharactersSorted.Count ; i++){
+        //     if(CharactersSorted[i] == character){
+        //         PlayerPrefs.SetInt("CurCharacter", i);
+        //         curCharacter = DataManager.instance.characterSotred[i];
+        //         break;
+        //     }
+        // }
     }
 
 

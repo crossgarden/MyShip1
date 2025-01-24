@@ -97,10 +97,10 @@ public class UIManager : MonoBehaviour
     }
 
     /** 4. 캐릭터 체인지 */
-    public void CharacterChange(Character character){
-        GameManager.instance.CharacterChange(character);
+    public void CharacterChangeUI(){
+        print("ui 체인지");
         SetFavorUI();
-        SetFullnessUI();
+        SetFullnessUI(); 
         SetEnergyUI();
         characterContainer.GetComponent<MainChaContainer>().ChangeCharacter();
         CharacterListPanel.SetActive(false);
@@ -138,7 +138,7 @@ public class UIManager : MonoBehaviour
     /** 4. 포만도 UI 업데이트 */
     public void SetFullnessUI()
     {
-        fullenssSlider.value = GameManager.instance.curCharacter.fullness;
+        fullenssSlider.value = curCharacter.fullness;
         SetSliderFillColor(fullenssSlider, fullnessFill);
     }
 
@@ -153,7 +153,7 @@ public class UIManager : MonoBehaviour
     /** 6. 에너지 UI 업데이트 */
     public void SetEnergyUI()
     {
-        energySlider.value = GameManager.instance.curCharacter.energy;
+        energySlider.value = curCharacter.energy;
         SetSliderFillColor(energySlider, energyFill);
     }
 
@@ -203,8 +203,11 @@ public class UIManager : MonoBehaviour
 
         CharacterListScroll scrollScript = CharacterListScrollView.GetComponent<CharacterListScroll>();
         CharacterListPanel.SetActive(true);
-        scrollScript.targetPos = PlayerPrefs.GetInt("CurCharater", 0);
+        scrollScript.targetPos = PlayerPrefs.GetInt("CurCharacter", 0);
         scrollScript.isDrag = false;
+        
+        scrollScript.contentTransform.GetChild(scrollScript.targetPos).GetChild(1).GetComponent<Scrollbar>().value = 1;
+
     }
 
     /** 3. 캐릭터 리스트 갱신 */
