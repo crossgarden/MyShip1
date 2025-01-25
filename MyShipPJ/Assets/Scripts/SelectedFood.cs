@@ -20,12 +20,11 @@ public class SelectedFood : MonoBehaviour
 
     private void Start()
     {
-        havingFoods = DataManager.instance.havingFoods;
+        havingFoods = DataManager.instance.LoadHavingFoods();
         InitFood();
 
         goalPosMin = Camera.main.ViewportToWorldPoint(new Vector3(0.29f, 0.35f, 0));
         goalPosMax = Camera.main.ViewportToWorldPoint(new Vector3(0.70f, 0.65f, 0));
-
     }
 
     // 음식 초기화
@@ -42,6 +41,7 @@ public class SelectedFood : MonoBehaviour
         }
         else
         {
+            havingFoodIndex = -1;
             gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/Items/Foods/null");
             foodTxt.text = null;
         }
@@ -50,8 +50,11 @@ public class SelectedFood : MonoBehaviour
     // selectFood 양쪽 화살표 버튼 Action
     public void ChangeFoodAction(int direction)
     {
+        havingFoods = DataManager.instance.LoadHavingFoods();
         if (havingFoods.Count == 0)
         {
+            havingFoodIndex = -1;
+            food = null;
             gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/Items/Foods/null");
             foodTxt.text = null;
             return;
@@ -59,7 +62,7 @@ public class SelectedFood : MonoBehaviour
 
         havingFoodIndex += direction;
 
-        if (havingFoodIndex == -1)
+        if (havingFoodIndex < 0)
             havingFoodIndex = havingFoods.Count - 1;
         if (havingFoodIndex >= havingFoods.Count)
             havingFoodIndex = 0;
@@ -76,6 +79,8 @@ public class SelectedFood : MonoBehaviour
     // 1. 음식 드래그
     public void BeginDragAction()
     {
+        havingFoods = DataManager.instance.LoadHavingFoods();
+
         if (havingFoods.Count == 0)
             return;
 
@@ -89,10 +94,9 @@ public class SelectedFood : MonoBehaviour
     {
         if (havingFoods.Count == 0)
             return;
-        
+
         Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        print(Camera.main.WorldToViewportPoint(pos));
-        if (pos.x > goalPosMin.x && pos.x < goalPosMax.x && pos.y > goalPosMin.y && pos.y < goalPosMax.y)  // 수정 - 좌표 이렇게 하드코딩 해도 되나?
+        if (GameManager.instance.curCharacter.fullness < 100 && pos.x > goalPosMin.x && pos.x < goalPosMax.x && pos.y > goalPosMin.y && pos.y < goalPosMax.y)  // 수정 - 좌표 이렇게 하드코딩 해도 되나?
         {
             // 사운드
             AudioManager.instance.PlaySFX(SFXClip.EATTING);
@@ -106,30 +110,28 @@ public class SelectedFood : MonoBehaviour
                 }
             }
 
-            DataManager.instance.saveData();
-            DataManager.instance.LoadHavingFoods();
-
-            UIManager.instance.FoodChange();
-
             // 먹인 후
             gameObject.SetActive(false);
 
-            if (food.count == 0) // 해당 food 다 먹은 경우
+            UIManager.instance.FoodChange(food.fullness, food.favor);
+
+            if (food is null || food.count == 0) // 해당 food 다 먹은 경우
                 ChangeFoodAction(1);
             else
                 foodTxt.text = food.kr_name + " x" + food.count;
 
+            havingFoods = DataManager.instance.LoadHavingFoods();
+
             gameObject.transform.position = initPos;
             gameObject.SetActive(true);
-
-            // 데이터 갱신
-            UIManager.instance.CharacterFavorUp(food.favor);
-            UIManager.instance.CharacterFullnessUp(food.fullness);
-            UIManager.instance.UpdateCurCharacter();
 
         }
         else
         {
+            if (GameManager.instance.curCharacter.fullness >= 100){
+                print("배부러링");
+            }
+            
             AudioManager.instance.PlaySFX(SFXClip.FAIL);
             gameObject.transform.position = initPos;
         }

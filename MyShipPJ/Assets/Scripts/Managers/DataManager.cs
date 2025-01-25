@@ -17,7 +17,6 @@ public class DataManager : MonoBehaviour
     public string userId;
     public UserData userData;
     
-    public List<Food> havingFoods;
     public List<Character> characterSotred;
 
     // firebase
@@ -80,21 +79,19 @@ public class DataManager : MonoBehaviour
         characterSotred = userData.characters
                             .OrderBy(c => c.locked) // Locked == 0인 요소가 앞에 오도록
                             .ThenBy(c => c.locked == 0 ? DateTime.Parse(c.unlockDate) : DateTime.MaxValue) // Locked == 0인 경우 Date로 정렬
-                            .ToList();
-        foreach(Character ch in characterSotred){
-            print(ch.ToString());
-        }
+                            .ToList();  
     }
 
      // count 1 이상 food 리스트 반환 - SelecetedFood.cs 에서 사용
-    public void LoadHavingFoods()
+    public List<Food> LoadHavingFoods()
     {
-        havingFoods = new List<Food>();
+        List<Food> havingFoods = new List<Food>();
         for (int i = 0; i < DataManager.instance.userData.foods.Count; i++)
         {
             if (DataManager.instance.userData.foods[i].count > 0)
                 havingFoods.Add(DataManager.instance.userData.foods[i]);
         }
+        return havingFoods;
     }
 
     // 파이어베이스

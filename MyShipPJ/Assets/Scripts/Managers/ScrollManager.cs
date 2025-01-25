@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using GameData;
 using UnityEngine;
 
 public class ScrollManager : MonoBehaviour
@@ -21,6 +22,7 @@ public class ScrollManager : MonoBehaviour
     public List<GameObject> midBotUI;
     public List<GameObject> rightBotUI;
 
+    public GameObject lightOffPanel;
 
     void Start()
     {
@@ -34,7 +36,6 @@ public class ScrollManager : MonoBehaviour
         BottomBarUIChange();
     }
 
-
     void Update()
     {
         // room 이동.
@@ -47,19 +48,24 @@ public class ScrollManager : MonoBehaviour
             BottomBarUIChange();
         }
 
+        if (curRoom == (int)RoomNum.PRIVATE)
+            lightOffPanel.SetActive(PlayerPrefs.GetInt("LightOn", 0) == 0);
+        else
+            lightOffPanel.SetActive(false);
+
     }
 
     // room 체인지 버튼 이벤트
     public void MoveRoomAction(int next) // next: 1, pre: -1
     {
-        if(curRoom + next < 0 || curRoom + next >= backgrounds.Count)
+        if (curRoom + next < 0 || curRoom + next >= backgrounds.Count)
             return;
 
         AudioManager.instance.PlaySFX(GameData.SFXClip.SLIDE);
         curRoom = Mathf.Clamp(curRoom + next, 0, backgrounds.Count - 1);
         PlayerPrefs.SetInt("CurRoom", curRoom);
         needUIChange = true;
-        
+
     }
 
     public void BottomBarUIChange()
@@ -70,7 +76,7 @@ public class ScrollManager : MonoBehaviour
             midBotUI[i].SetActive(false);
             rightBotUI[i].SetActive(false);
         }
-        
+
         leftBotUI[curRoom].SetActive(true);
         midBotUI[curRoom].SetActive(true);
         rightBotUI[curRoom].SetActive(true);

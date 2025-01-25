@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using GameData;
@@ -17,6 +18,7 @@ public class UIManager : MonoBehaviour
 
     [Header("Character")]
     public Character curCharacter;
+    List<Character> characters;
     public Transform characterContainer;
 
     /**  Top bar */
@@ -29,16 +31,22 @@ public class UIManager : MonoBehaviour
     public Slider favorSlider;
     public TextMeshProUGUI characterLevelTxt;
 
-    List<Character> characters;
-
     /** 캐릭터 리스트 */
     [Header("Character list")]
     public GameObject CharacterListPanel;
     public Transform CharacterListScrollView;
     public GameObject characterListContent;
     public GameObject CharacterCardPrefab;
-    
-    /** 식당 */
+
+    /** 0. 대기실 */
+
+    /** 1. 개인실 */
+    [Header("private room")]
+    public Sprite[] lightImgs;   // 0-Off, 1-on
+    public Image lightImg;
+    public GameObject lightOffPanel;
+
+    /** 2. 식당 */
     [Header("refrigerator")]
     public GameObject refrigeratorPanel;
     public GameObject refrigeratorContent;
@@ -64,8 +72,14 @@ public class UIManager : MonoBehaviour
         SetEnergyUI();
         SetCoinUI();
 
-        FoodChange();
         LoadCharacterList();
+        FoodChange();
+
+        if (PlayerPrefs.GetInt("CurRoom", 0) == (int)RoomNum.PRIVATE)
+        {
+            lightImg.sprite = lightImgs[PlayerPrefs.GetInt("LightOn", 0)];
+            lightOffPanel.SetActive(PlayerPrefs.GetInt("LightOn", 0) == 0);
+        }
     }
 
     /** [1-4] 공용 */
@@ -97,12 +111,19 @@ public class UIManager : MonoBehaviour
     }
 
     /** 4. 캐릭터 체인지 */
-    public void CharacterChangeUI(){
-        print("ui 체인지");
+    public void CharacterChangeUI()
+    {
+        curCharacter = GameManager.instance.curCharacter;
+
+        // top bar 변경
         SetFavorUI();
-        SetFullnessUI(); 
+        SetFullnessUI();
         SetEnergyUI();
+
+        // 캐릭터 변경
         characterContainer.GetComponent<MainChaContainer>().ChangeCharacter();
+
+        // 캐릭터 리스트 팝업 닫기
         CharacterListPanel.SetActive(false);
     }
 
@@ -181,7 +202,6 @@ public class UIManager : MonoBehaviour
     /** 1. 캐릭터 리스트 UI 로드 */
     public void LoadCharacterList()
     {
-        List<Character> characters = DataManager.instance.characterSotred;
 
         // 캐릭터 카드 추가
         for (int i = 0; i < characters.Count; i++)
@@ -205,9 +225,8 @@ public class UIManager : MonoBehaviour
         CharacterListPanel.SetActive(true);
         scrollScript.targetPos = PlayerPrefs.GetInt("CurCharacter", 0);
         scrollScript.isDrag = false;
-        
-        scrollScript.contentTransform.GetChild(scrollScript.targetPos).GetChild(1).GetComponent<Scrollbar>().value = 1;
 
+        scrollScript.contentTransform.GetChild(scrollScript.targetPos).GetChild(1).GetComponent<Scrollbar>().value = 1;
     }
 
     /** 3. 캐릭터 리스트 갱신 */
@@ -224,12 +243,10 @@ public class UIManager : MonoBehaviour
     /** 4. 캐릭터 리스트 중 현재 캐릭터만 갱신 */
     public void UpdateCurCharacter()
     {
-        int index = PlayerPrefs.GetInt("CurCharacter", 2);
+        int index = PlayerPrefs.GetInt("CurCharacter", 0);
         Transform card = characterListContent.transform.GetChild(index);
         CharacterCard cardScript = card.GetComponent<CharacterCard>();
         cardScript.SetUI(characters[index], index);
-        print("cur " + curCharacter.name);
-        print(cardScript.name + "업데이트 완");
     }
 
 
@@ -252,7 +269,10 @@ public class UIManager : MonoBehaviour
 
     public void LightAction()
     {
-        print("LightAction");
+        int prelight = PlayerPrefs.GetInt("LightOn", 0);
+        PlayerPrefs.SetInt("LightOn", prelight ^ 1);
+        lightImg.sprite = lightImgs[prelight ^ 1];
+        lightOffPanel.SetActive(prelight == 1);
     }
 
     public void RoomDecoAction()
@@ -260,7 +280,7 @@ public class UIManager : MonoBehaviour
         print("RoomDecoAction");
     }
 
-    // [1-8] Room 2 - 식당 
+    /******************* [1-8] Room 2 - 식당 **************/
     // 1. 냉장고 버튼 액션
     public void RefrigeratorAction()
     {
@@ -271,7 +291,7 @@ public class UIManager : MonoBehaviour
     /** 2. 냉장고 데이터 로드 */
     void LoadRefrigerator()
     {
-        List<Food> foods = DataManager.instance.havingFoods;
+        List<Food> foods = DataManager.instance.LoadHavingFoods();
 
         // 내용 비우기
         foreach (Transform child in refrigeratorContent.transform)
@@ -334,7 +354,6 @@ public class UIManager : MonoBehaviour
         AudioManager.instance.PlaySFX(SFXClip.CLICK);
         foodShopPanel.SetActive(false);
         FoodChange();
-        selectedFood.GetComponent<SelectedFood>().foodTxt.text = selectedFood.GetComponent<SelectedFood>().food.kr_name + " x" + selectedFood.GetComponent<SelectedFood>().food.count;
     }
 
     /** 6. 냉장고로 돌아가기 버튼 액션 */
@@ -345,12 +364,20 @@ public class UIManager : MonoBehaviour
     }
 
     /** 7. food 내용 변경시 데이터 갱신 */
-    public void FoodChange()
+    public void FoodChange(int fullness = 0, int favor = 0)
     {
+        List<Food> foods = DataManager.instance.LoadHavingFoods();
+        CharacterFavorUp(favor);
+        CharacterFullnessUp(fullness);
+
+        selectedFood.GetComponent<SelectedFood>().ChangeFoodAction(0);
+
         DataManager.instance.saveData();
         DataManager.instance.LoadHavingFoods();
         LoadRefrigerator();
         LoadFoodShop();
+
+        UpdateCurCharacter();
     }
 
     /** 8. food 선택 -> SelectedFood에 세팅 */

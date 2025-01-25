@@ -39,11 +39,19 @@ public class FoodShopItem : MonoBehaviour
 
     public void BuyAction()
     {
+
         AudioManager.instance.PlaySFX(SFXClip.BUY);
         DataManager.instance.userData.coin -= food.cost;
         food.count += 1;
         countTxt.text = "x" + food.count.ToString();
         UIManager.instance.SetCoinUI();
+
+        for(int i = 0; i < DataManager.instance.LoadHavingFoods().Count ; i++){
+            if(food == DataManager.instance.LoadHavingFoods()[i]){
+                UIManager.instance.SelectFoodAction(food, i);
+                break;
+            }
+        }
     }
 
 }

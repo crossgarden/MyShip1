@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace GameData
 {
-    public enum SFXClip { NONE=-1, FAIL, EATTING, SLIDE, BUY, CLICK, MAX }
-    public enum BGMClip { NONE=-1, MAX }
+    public enum SFXClip { NONE = -1, FAIL, EATTING, SLIDE, BUY, CLICK, MAX }
+    public enum BGMClip { NONE = -1, MAX }
 
     public enum RoomNum { WAITTING, PRIVATE, RESTAURANT, MAX }
 
@@ -22,7 +22,8 @@ namespace GameData
         public string ToString()
         {
             string foodStr = "";
-            for(int i = 0; i < foods.Count ; i++){
+            for (int i = 0; i < foods.Count; i++)
+            {
                 foodStr += foods[i].ToString();
             }
             return string.Format("foods: {0}", foodStr);

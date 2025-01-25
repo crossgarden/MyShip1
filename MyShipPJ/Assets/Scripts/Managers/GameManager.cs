@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     public Character curCharacter;
-    public List<Character> CharactersSorted;
+    public List<Character> characters;
     readonly int decayRateFullness = 108; // 초당 감소율. 108: 3시간동안 100 > 0
     readonly int improveRate = 12;  // 20분동안 0 > 100
 
@@ -57,12 +57,11 @@ public class GameManager : MonoBehaviour
             TimeSpan timeDifference = DateTime.Now - DateTime.Parse(PlayerPrefs.GetString("OffTime")); ;
             int elapsedTime = (int)timeDifference.TotalSeconds; // 경과 시간
 
-            print("시간경과: " + elapsedTime + "초 | " + "감소량: " + (elapsedTime / decayRateFullness) + ", 증가량: " + (elapsedTime / improveRate));
             // 포만도 감소
             curCharacter.fullness = Mathf.Max(curCharacter.fullness - (elapsedTime / decayRateFullness), 0);
 
             // 에너지 증가
-            foreach (Character cha in CharactersSorted)
+            foreach (Character cha in characters)
                 if (cha.locked == 0)
                     cha.energy = Mathf.Min(cha.energy + (elapsedTime / improveRate), 100);
 
@@ -86,27 +85,26 @@ public class GameManager : MonoBehaviour
             DataManager.instance.saveData();
 
             UIManager.instance.UpdateCharacterList();
-            print("포만도 감소");
+
         }
     }
 
-    /** 4. 시간에 따른 서브 캐릭터 + 불 꺼둔 메인 캐릭터 에너지 증가 */
+    /** 4. 시간에 따른 서브 캐릭터 + 개인실에 불 꺼둔 메인 캐릭터 에너지 증가 */
     IEnumerator ImproveEnergy()
     {
         while (true)
         {
             yield return new WaitForSecondsRealtime(improveRate);
 
-            foreach (Character cha in CharactersSorted)
+            foreach (Character cha in characters)
                 if (cha.locked == 0)
                     cha.energy = Mathf.Min(cha.energy + 1, 100);
 
-            if (PlayerPrefs.GetInt("IsLightOn") == 1 || PlayerPrefs.GetInt("CurRoom") != (int)RoomNum.PRIVATE)
+            if (PlayerPrefs.GetInt("LightOn") == 1 || PlayerPrefs.GetInt("CurRoom") != (int)RoomNum.PRIVATE)
                 curCharacter.energy = Mathf.Max(curCharacter.energy - 1, 0);
 
             DataManager.instance.saveData();
             UIManager.instance.UpdateCharacterList();
-            print("에너지 증가");
         }
     }
 
@@ -114,7 +112,7 @@ public class GameManager : MonoBehaviour
     /** 1. 캐릭터 초기화 */
     public void CharacterInit()
     {
-        CharactersSorted = DataManager.instance.characterSotred;
+        characters = DataManager.instance.characterSotred;
         int index = PlayerPrefs.GetInt("CurCharacter", 0);
         curCharacter = DataManager.instance.characterSotred[index];
     }
@@ -123,15 +121,16 @@ public class GameManager : MonoBehaviour
     public void CharacterChange(int index)
     {
         PlayerPrefs.SetInt("CurCharacter", index);
-        curCharacter = DataManager.instance.characterSotred[index];
+        curCharacter = characters[index];
+
         UIManager.instance.CharacterChangeUI();
     }
 
     /** 2. 캐릭터 교체 - Charater로 */
     public void CharacterChange(Character character)
     {
-        // for(int i = 0 ; i < CharactersSorted.Count ; i++){
-        //     if(CharactersSorted[i] == character){
+        // for(int i = 0 ; i < characters.Count ; i++){
+        //     if(characters[i] == character){
         //         PlayerPrefs.SetInt("CurCharacter", i);
         //         curCharacter = DataManager.instance.characterSotred[i];
         //         break;

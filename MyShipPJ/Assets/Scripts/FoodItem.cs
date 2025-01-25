@@ -36,7 +36,6 @@ public class FoodItem : MonoBehaviour
 
     public void SelectFoodAction()
     {
-        // 동적 추가라 이미 계층뷰에 있는 selectedFood를 참조할 수 없어서 GameManger 활용
         UIManager.instance.SelectFoodAction(food, havingFoodIndex);
     }
 }
