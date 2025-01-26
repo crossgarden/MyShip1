@@ -127,6 +127,8 @@ public class UIManager : MonoBehaviour
         CharacterListPanel.SetActive(false);
     }
 
+
+
     /*************** [2-6] top bar 세팅 **********************/
     /** 2. 호감도 UI 업데이트 */
     public void SetFavorUI()
@@ -198,6 +200,8 @@ public class UIManager : MonoBehaviour
         coinTxt.text = txt;
     }
 
+
+
     /*************** [1-4] 캐릭터 리스트 UI 세팅 *************************/
     /** 1. 캐릭터 리스트 UI 로드 */
     public void LoadCharacterList()
@@ -250,6 +254,7 @@ public class UIManager : MonoBehaviour
     }
 
 
+
     // Room 0 - 대기실
     public void ExitAction()
     {
@@ -279,6 +284,9 @@ public class UIManager : MonoBehaviour
     {
         print("RoomDecoAction");
     }
+
+
+
 
     /******************* [1-8] Room 2 - 식당 **************/
     // 1. 냉장고 버튼 액션
@@ -316,6 +324,7 @@ public class UIManager : MonoBehaviour
         // 구매 버튼 뒤로
         foodShopBtn.transform.SetAsLastSibling();
     }
+
 
     /** 3. food shop 버튼 액션 */
     public void FoodShopAction()
