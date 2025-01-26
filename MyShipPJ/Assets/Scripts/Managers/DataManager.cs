@@ -16,7 +16,9 @@ public class DataManager : MonoBehaviour
 
     public string userId;
     public UserData userData;
-    
+
+    public readonly int[] favorMax = { 0, 50, 100, 150, 200, 250, 300, 400 };
+
     public List<Character> characterSotred;
 
     // firebase
@@ -48,7 +50,6 @@ public class DataManager : MonoBehaviour
     {
         // FirebaseInit();
         loadData();
-        LoadHavingFoods();
         CharacterSort();
     }
 
@@ -75,23 +76,12 @@ public class DataManager : MonoBehaviour
         // File.WriteAllText(path + "systemData.json",JsonUtility.ToJson(systemData, true));
     }
 
-    public void CharacterSort(){
+    public void CharacterSort()
+    {
         characterSotred = userData.characters
                             .OrderBy(c => c.locked) // Locked == 0인 요소가 앞에 오도록
                             .ThenBy(c => c.locked == 0 ? DateTime.Parse(c.unlockDate) : DateTime.MaxValue) // Locked == 0인 경우 Date로 정렬
-                            .ToList();  
-    }
-
-     // count 1 이상 food 리스트 반환 - SelecetedFood.cs 에서 사용
-    public List<Food> LoadHavingFoods()
-    {
-        List<Food> havingFoods = new List<Food>();
-        for (int i = 0; i < DataManager.instance.userData.foods.Count; i++)
-        {
-            if (DataManager.instance.userData.foods[i].count > 0)
-                havingFoods.Add(DataManager.instance.userData.foods[i]);
-        }
-        return havingFoods;
+                            .ToList();
     }
 
     // 파이어베이스
@@ -123,6 +113,6 @@ public class DataManager : MonoBehaviour
 
     }
 
-   
+
 
 }

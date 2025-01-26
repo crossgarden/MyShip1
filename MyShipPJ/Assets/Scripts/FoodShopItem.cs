@@ -12,46 +12,46 @@ public class FoodShopItem : MonoBehaviour
     public Image img;
     public TextMeshProUGUI nameTxt, countTxt, FullnessTxt, favorTxt, costTxt, descript;
     public Button buyBtn;
-
-    private void Update()
-    {
-        if (food.cost > DataManager.instance.userData.coin)
-            buyBtn.interactable = false;
-    }
-
+    
     public void SetUI(Food food)
     {
         this.food = food;
 
-        this.nameTxt.text = food.kr_name;
-        if (food.count > 0)
-            this.countTxt.text = "x" + food.count;
-        this.costTxt.text = food.cost.ToString();
-        this.FullnessTxt.text = food.fullness.ToString();
-        this.favorTxt.text = food.favor.ToString();
-        this.descript.text = food.descript.ToString();
-
-        if (food.cost > DataManager.instance.userData.coin)
-            buyBtn.interactable = false;
-
         img.sprite = Resources.Load<Sprite>(path + food.name);
+        nameTxt.text = food.kr_name;
+        costTxt.text = food.cost.ToString();
+        FullnessTxt.text = food.fullness.ToString();
+        favorTxt.text = food.favor.ToString();
+        descript.text = food.descript.ToString();
+        SetCount();
+        SetVisibleBuy();
+        gameObject.SetActive(true);
+    }
+
+    public void SetCount()
+    {
+        if (food.count > 0)
+            countTxt.text = "x" + food.count;
+        else
+            countTxt.text = "";
+    }
+
+    public void SetVisibleBuy()
+    {
+        buyBtn.interactable = food.cost <= DataManager.instance.userData.coin;
     }
 
     public void BuyAction()
     {
-
         AudioManager.instance.PlaySFX(SFXClip.BUY);
+
         DataManager.instance.userData.coin -= food.cost;
         food.count += 1;
-        countTxt.text = "x" + food.count.ToString();
+        SetCount();
         UIManager.instance.SetCoinUI();
 
-        for(int i = 0; i < DataManager.instance.LoadHavingFoods().Count ; i++){
-            if(food == DataManager.instance.LoadHavingFoods()[i]){
-                UIManager.instance.SelectFoodAction(food, i);
-                break;
-            }
-        }
+        UIManager.instance.FoodChange(food);
+        UIManager.instance.SelectFoodAction(food);
     }
 
 }

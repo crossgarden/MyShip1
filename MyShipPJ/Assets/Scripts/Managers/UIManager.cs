@@ -46,8 +46,17 @@ public class UIManager : MonoBehaviour
     public Image lightImg;
     public GameObject lightOffPanel;
 
+    public List<Wallpaper> wallpapers;
+    public GameObject wallpaperPrefab;
+    public GameObject wallPaperPanel;
+    public List<GameObject> wallpaperScrollViews;
+    public List<GameObject> wallPaperContents;
+    public TMP_Dropdown wallpaperDropdown;
+    public Transform WallpaperContainer;
+
     /** 2. 식당 */
     [Header("refrigerator")]
+    public List<Food> foods;
     public GameObject refrigeratorPanel;
     public GameObject refrigeratorContent;
     public GameObject foodItemPrefab;
@@ -64,22 +73,32 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        curCharacter = GameManager.instance.curCharacter;
-        characters = DataManager.instance.characterSotred;
+        InitData();
 
+        LoadCharacterList();
         SetFavorUI();
         SetFullnessUI();
         SetEnergyUI();
         SetCoinUI();
 
-        LoadCharacterList();
-        FoodChange();
+        InitRefrigerator();
+        InitFoodShop();
+        InitWallPaperList();
+        InitWallpaper();
 
         if (PlayerPrefs.GetInt("CurRoom", 0) == (int)RoomNum.PRIVATE)
         {
             lightImg.sprite = lightImgs[PlayerPrefs.GetInt("LightOn", 0)];
             lightOffPanel.SetActive(PlayerPrefs.GetInt("LightOn", 0) == 0);
         }
+    }
+
+    public void InitData()
+    {
+        curCharacter = GameManager.instance.curCharacter;
+        characters = DataManager.instance.characterSotred;
+        foods = DataManager.instance.userData.foods;
+        wallpapers = DataManager.instance.userData.wallpapers;
     }
 
     /** [1-4] 공용 */
@@ -128,14 +147,14 @@ public class UIManager : MonoBehaviour
     }
 
 
-
     /*************** [2-6] top bar 세팅 **********************/
     /** 2. 호감도 UI 업데이트 */
     public void SetFavorUI()
     {
         characterLevelTxt.text = curCharacter.level.ToString();
-        favorSlider.maxValue = DataManager.instance.userData.favor_max[curCharacter.level];
+        favorSlider.maxValue = DataManager.instance.favorMax[curCharacter.level];
         favorSlider.value = curCharacter.favor;
+        UpdateCurCharacter();
     }
 
     /** 3. 호감도 업 */
@@ -145,9 +164,9 @@ public class UIManager : MonoBehaviour
             return;
 
         int fixFavor = curCharacter.favor + favor;
-        if (fixFavor >= DataManager.instance.userData.favor_max[curCharacter.level])
+        if (fixFavor >= DataManager.instance.favorMax[curCharacter.level])
         {
-            curCharacter.favor = fixFavor - DataManager.instance.userData.favor_max[curCharacter.level];
+            curCharacter.favor = fixFavor - DataManager.instance.favorMax[curCharacter.level];
             curCharacter.level += 1;
         }
         else
@@ -163,6 +182,7 @@ public class UIManager : MonoBehaviour
     {
         fullenssSlider.value = curCharacter.fullness;
         SetSliderFillColor(fullenssSlider, fullnessFill);
+        UpdateCurCharacter();
     }
 
     /** 5. 포만도 업 */
@@ -202,11 +222,12 @@ public class UIManager : MonoBehaviour
 
 
 
+
+
     /*************** [1-4] 캐릭터 리스트 UI 세팅 *************************/
     /** 1. 캐릭터 리스트 UI 로드 */
     public void LoadCharacterList()
     {
-
         // 캐릭터 카드 추가
         for (int i = 0; i < characters.Count; i++)
         {
@@ -253,8 +274,6 @@ public class UIManager : MonoBehaviour
         cardScript.SetUI(characters[index], index);
     }
 
-
-
     // Room 0 - 대기실
     public void ExitAction()
     {
@@ -272,6 +291,7 @@ public class UIManager : MonoBehaviour
         print("ClothesAction");
     }
 
+    /** 1. 전등 버튼 액션 */
     public void LightAction()
     {
         int prelight = PlayerPrefs.GetInt("LightOn", 0);
@@ -280,15 +300,80 @@ public class UIManager : MonoBehaviour
         lightOffPanel.SetActive(prelight == 1);
     }
 
-    public void RoomDecoAction()
+    /** 2. 벽지 리스트 버튼 액션 */
+    public void WallPaperAction()
     {
-        print("RoomDecoAction");
+        AudioManager.instance.PlaySFX(SFXClip.CLICK);
+
+        RectTransform rt = wallPaperContents[PlayerPrefs.GetInt("WallpaperRoomNum", 0)].transform.GetComponent<RectTransform>();
+        rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, 0);
+
+        wallPaperPanel.SetActive(true);
     }
 
+    /** 3. 벽지 리스트 초기화 */
+    public void InitWallPaperList()
+    {
+        foreach (Wallpaper wallpaper in wallpapers)
+        {
+            GameObject wallpaperItem = Instantiate(wallpaperPrefab, transform.position, Quaternion.identity);
+            WallpaperItem wallpaperScript = wallpaperItem.GetComponent<WallpaperItem>();
 
+            wallpaperItem.name = wallpaper.name;
+            wallpaperScript.SetUI(wallpaper);
 
+            wallpaperItem.transform.SetParent(wallPaperContents[(int)wallpaper.roomNum].transform, false);
+        }
 
-    /******************* [1-8] Room 2 - 식당 **************/
+        wallpaperScrollViews[PlayerPrefs.GetInt("WallpaperRoomNum", 0)].SetActive(true);
+        wallpaperDropdown.value = PlayerPrefs.GetInt("WallpaperRoomNum", 0);
+    }
+
+    /** 4. 벽지 룸 변경 */
+    public void ChangeDropdownInWallpaper(int roomNUm)
+    {
+        wallpaperScrollViews[PlayerPrefs.GetInt("WallpaperRoomNum", 0)].SetActive(false);
+
+        RectTransform rt = wallPaperContents[PlayerPrefs.GetInt("WallpaperRoomNum", 0)].transform.GetComponent<RectTransform>();
+        rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, 0);
+
+        wallpaperScrollViews[roomNUm].SetActive(true);
+        PlayerPrefs.SetInt("WallpaperRoomNum", roomNUm);
+    }
+
+    /** 5. 벽지 변경 */
+    public void ChangeWallpaper(Wallpaper wallpaper)
+    {
+        int roomNum = (int)wallpaper.roomNum;
+        Transform wallpaperContent = wallPaperContents[roomNum].transform;
+        for (int i = 0; i < wallpaperContent.childCount; i++)
+            wallpaperContent.GetChild(i).GetChild(0).GetChild(1).gameObject.SetActive(false); // checkedImg
+
+        WallpaperContainer.GetChild(roomNum).GetComponent<SpriteRenderer>().sprite
+            = Resources.Load<Sprite>("Sprites/Items/Wallpapers/" + roomNum + "_" + wallpaper.name);
+    }
+
+    /** 6. 벽지 초기화 */
+    public void InitWallpaper(){
+        Sprite[] paperSprites = new Sprite[WallpaperContainer.childCount];
+
+        for(int i = 0 ; i < WallpaperContainer.childCount ; i++){
+            int paper = PlayerPrefs.GetInt(i+"_wallpaper",0);
+
+            foreach(Wallpaper wallpaper in wallpapers){
+                if(wallpaper.id==paper){
+                    paperSprites[i] = Resources.Load<Sprite>("Sprites/Items/Wallpapers/" + i + "_" + wallpaper.name);
+                    print(wallpaper.name);
+                    break;
+                }
+            }
+        }
+        for (int i = 0; i < WallpaperContainer.childCount; i++){
+            WallpaperContainer.transform.GetChild(i).GetComponent<SpriteRenderer>().sprite = paperSprites[i];
+        }
+    }
+
+    /******************* [1-8] Room 2 - 식당 ********************/
     // 1. 냉장고 버튼 액션
     public void RefrigeratorAction()
     {
@@ -296,37 +381,32 @@ public class UIManager : MonoBehaviour
         refrigeratorPanel.SetActive(true);
     }
 
-    /** 2. 냉장고 데이터 로드 */
-    void LoadRefrigerator()
+    /** 2. 냉장고 초기화  */
+    void InitRefrigerator()
     {
-        List<Food> foods = DataManager.instance.LoadHavingFoods();
-
-        // 내용 비우기
-        foreach (Transform child in refrigeratorContent.transform)
+        foreach (Food food in foods)
         {
-            if (child != foodShopBtn.transform)
-                Destroy(child.gameObject);
+            GameObject foodItem = Instantiate(foodItemPrefab, transform.position, Quaternion.identity);
+            FoodItem foodItemScript = foodItem.GetComponent<FoodItem>();
+
+            foodItemScript.SetUI(food);
+            foodItem.name = food.name;
+
+            foodItem.transform.SetParent(refrigeratorContent.transform, false);
         }
 
-        // 아이템 추가
-        for (int i = 0; i < foods.Count; i++)
-        {
-            GameObject food = Instantiate(foodItemPrefab, transform.position, Quaternion.identity);
-            FoodItem foodItem = food.GetComponent<FoodItem>();
-
-            food.name = foods[i].name;
-            foodItem.SetUI(foods[i], i);
-
-            food.transform.SetParent(refrigeratorContent.transform, false);
-            food.SetActive(true);
-        }
-
-        // 구매 버튼 뒤로
         foodShopBtn.transform.SetAsLastSibling();
     }
 
+    /** 3. 냉장고 업데이트 */
+    void UpdateRefirgerator(Food food)
+    {
+        GameObject foodItem = refrigeratorContent.transform.GetChild(food.index).gameObject;
+        FoodItem foodItemScript = foodItem.GetComponent<FoodItem>();
+        foodItemScript.SetCount();
+    }
 
-    /** 3. food shop 버튼 액션 */
+    /** 4. food shop 버튼 액션 */
     public void FoodShopAction()
     {
         AudioManager.instance.PlaySFX(SFXClip.CLICK);
@@ -334,27 +414,28 @@ public class UIManager : MonoBehaviour
         foodShopPanel.SetActive(true);
     }
 
-    /** 4. food shop 데이터 로드 */
-    void LoadFoodShop()
+    /** 5. food shop 초기화 */
+    void InitFoodShop()
     {
-        List<Food> foods = DataManager.instance.userData.foods;
-
-        // 내용 비우기
-        foreach (Transform child in foodShopContent.transform)
-            Destroy(child.gameObject);
-
         // 아이템 추가
-        for (int i = 0; i < foods.Count; i++)
+        foreach (Food food in foods)
         {
-            GameObject food = Instantiate(foodShopItemPrefab, transform.position, Quaternion.identity);
-            FoodShopItem foodShopItem = food.GetComponent<FoodShopItem>();
+            GameObject foodShopItem = Instantiate(foodShopItemPrefab, transform.position, Quaternion.identity);
+            FoodShopItem foodShopItemScript = foodShopItem.GetComponent<FoodShopItem>();
 
-            food.name = foods[i].name;
-            foodShopItem.SetUI(foods[i]);
+            foodShopItem.name = food.name;
+            foodShopItemScript.SetUI(food);
 
-            food.transform.SetParent(foodShopContent.transform, false);
-            food.SetActive(true);
+            foodShopItem.transform.SetParent(foodShopContent.transform, false);
         }
+    }
+
+    void UpdateFoodShop(Food food)
+    {
+        GameObject foodShopItem = foodShopContent.transform.GetChild(food.index).gameObject;
+        FoodShopItem foodShopItemScript = foodShopItem.GetComponent<FoodShopItem>();
+        foodShopItemScript.SetCount();
+        foodShopItemScript.SetVisibleBuy();
     }
 
     /** 5. food shop (+냉장고) 닫기 버튼 액션 */
@@ -362,7 +443,6 @@ public class UIManager : MonoBehaviour
     {
         AudioManager.instance.PlaySFX(SFXClip.CLICK);
         foodShopPanel.SetActive(false);
-        FoodChange();
     }
 
     /** 6. 냉장고로 돌아가기 버튼 액션 */
@@ -373,32 +453,20 @@ public class UIManager : MonoBehaviour
     }
 
     /** 7. food 내용 변경시 데이터 갱신 */
-    public void FoodChange(int fullness = 0, int favor = 0)
+    public void FoodChange(Food food)
     {
-        List<Food> foods = DataManager.instance.LoadHavingFoods();
-        CharacterFavorUp(favor);
-        CharacterFullnessUp(fullness);
-
-        selectedFood.GetComponent<SelectedFood>().ChangeFoodAction(0);
-
         DataManager.instance.saveData();
-        DataManager.instance.LoadHavingFoods();
-        LoadRefrigerator();
-        LoadFoodShop();
 
-        UpdateCurCharacter();
+        UpdateRefirgerator(food);
+        UpdateFoodShop(food);
     }
 
     /** 8. food 선택 -> SelectedFood에 세팅 */
     /** FoodItems.SelectFoodAction()에서 사용. */
-    public void SelectFoodAction(Food food, int havingFoodIndex)
+    public void SelectFoodAction(Food food)
     {
-        selectedFood.GetComponent<SelectedFood>().food = food;
-        selectedFood.GetComponent<SelectedFood>().havingFoodIndex = havingFoodIndex;
-
-        selectedFood.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/Items/Foods/" + food.name);
-        selectedFoodTxt.text = food.kr_name + " x" + food.count;
-        PlayerPrefs.SetInt("SelectedFood", havingFoodIndex);
+        selectedFood.GetComponent<SelectedFood>().SetUI(food);
+        PlayerPrefs.SetInt("SelectedFood", food.index);
         refrigeratorPanel.SetActive(false);
     }
 

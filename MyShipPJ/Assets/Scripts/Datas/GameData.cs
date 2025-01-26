@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace GameData
 {
-    public enum SFXClip { NONE = -1, FAIL, EATTING, SLIDE, BUY, CLICK, MAX }
+    public enum SFXClip { NONE = -1, FAIL, EATTING, SLIDE, BUY, CLICK, SUCCESS, MAX }
     public enum BGMClip { NONE = -1, MAX }
 
     public enum RoomNum { WAITTING, PRIVATE, RESTAURANT, MAX }
@@ -16,7 +16,8 @@ namespace GameData
         public int coin;
         public List<Food> foods;
         public List<Character> characters;
-        public int[] favor_max;
+
+        public List<Wallpaper> wallpapers; 
 
         override
         public string ToString()
@@ -33,6 +34,7 @@ namespace GameData
     [Serializable]
     public class Food
     {
+        public int index;
         public string name;
         public string kr_name;
         public int cost;
@@ -70,4 +72,21 @@ namespace GameData
         }
     }
 
+    [Serializable]
+    public class Wallpaper{
+        public int id;
+        public string name;
+        public string kr_name;
+        public string discript;
+        public string howToGet;
+        public int locked;
+        public string getDate;
+        public int cost;
+        public RoomNum roomNum;
+
+        override
+        public string ToString(){
+            return string.Format("{0} : {1}의 {2} - locked: {3}", id, roomNum, kr_name, locked);
+        }
+    }
 }

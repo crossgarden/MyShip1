@@ -15,7 +15,6 @@ public class CharacterCard : MonoBehaviour
     public Slider fullnessSlider, energySlider;
     public Image fullnessFill, energyFill;
 
-
     public void SetUI(Character character, int index)
     {
         this.image.sprite = Resources.Load<Sprite>(path + character.name + "_all");

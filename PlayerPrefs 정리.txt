@@ -1,0 +1,12 @@
+PlayerPrefs 정리
+
+- CurCharacter
+
+- OffTime
+
+- LightOn
+- WallpaperRoomNum
+	ㄴ 0_wallpaper	// (int)wallpaper.roomNum + "_wallpaper"
+	ㄴ 1_wallpaper
+	ㄴ 2_wallpaper
+- SelectedFood

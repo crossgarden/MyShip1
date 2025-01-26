@@ -12,15 +12,14 @@ public class SelectedFood : MonoBehaviour
     public TextMeshProUGUI foodTxt;
 
     public Food food;
-    public List<Food> havingFoods;
-    public int havingFoodIndex;
+    public List<Food> foods;
 
     public Vector3 goalPosMin;
     public Vector3 goalPosMax;
 
     private void Start()
     {
-        havingFoods = DataManager.instance.LoadHavingFoods();
+        foods = DataManager.instance.userData.foods;
         InitFood();
 
         goalPosMin = Camera.main.ViewportToWorldPoint(new Vector3(0.29f, 0.35f, 0));
@@ -31,57 +30,81 @@ public class SelectedFood : MonoBehaviour
     public void InitFood()
     {
         initPos = transform.position;
-        havingFoodIndex = PlayerPrefs.GetInt("SelectedFood", 0);
 
-        if (havingFoods.Count > 0)
+        bool hasFood = false;
+
+        foreach (Food food in foods)
+            if (food.count > 0)
+            {
+                hasFood = true;
+                break;
+            }
+
+        if (hasFood)
         {
-            food = havingFoods[havingFoodIndex];
+            food = foods[PlayerPrefs.GetInt("SelectedFood")];
             gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/Items/Foods/" + food.name);
             foodTxt.text = food.kr_name + " x" + food.count;
         }
         else
         {
-            havingFoodIndex = -1;
+            food = null;
             gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/Items/Foods/null");
-            foodTxt.text = null;
+            foodTxt.text = "";
         }
+    }
+
+    public void SetUI(Food food)
+    {
+        gameObject.name = food.name;
+        this.food = food;
+        gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/Items/Foods/" + food.name);
+        foodTxt.text = food.kr_name + " x" + food.count;
     }
 
     // selectFood 양쪽 화살표 버튼 Action
     public void ChangeFoodAction(int direction)
     {
-        havingFoods = DataManager.instance.LoadHavingFoods();
-        if (havingFoods.Count == 0)
+        // 갖고 있는 음식 종류 개수
+        int foodCount = 0;
+
+        foreach (Food food in foods)
+            if (food.count > 0)
+                foodCount += 1;
+
+        // 보유 음식이 0 이면 텅 표시
+        if (foodCount == 0)
         {
-            havingFoodIndex = -1;
-            food = null;
             gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/Items/Foods/null");
+            food = null;
             foodTxt.text = null;
             return;
         }
 
-        havingFoodIndex += direction;
+        // 보유 음식이 둘 이상일 시 실행
+        int targetFoodIndex = food.index;
+        do
+        {
+            targetFoodIndex += direction;
 
-        if (havingFoodIndex < 0)
-            havingFoodIndex = havingFoods.Count - 1;
-        if (havingFoodIndex >= havingFoods.Count)
-            havingFoodIndex = 0;
+            if (targetFoodIndex < 0)
+                targetFoodIndex = foods.Count - 1;
 
-        food = havingFoods[havingFoodIndex];
+            if (targetFoodIndex >= foods.Count)
+                targetFoodIndex = 0;
 
-        gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/Items/Foods/" + food.name);
-        foodTxt.text = food.kr_name + " x" + food.count;
+        } while (foods[targetFoodIndex].count < 1);
 
-        PlayerPrefs.SetInt("SelectedFood", havingFoodIndex);
+        SetUI(foods[targetFoodIndex]);
+        PlayerPrefs.SetInt("SelectedFood", food.index);
+
     }
 
     // [1-2] 음식 주기
     // 1. 음식 드래그
     public void BeginDragAction()
     {
-        havingFoods = DataManager.instance.LoadHavingFoods();
-
-        if (havingFoods.Count == 0)
+        if (food is null)
             return;
 
         Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -92,7 +115,7 @@ public class SelectedFood : MonoBehaviour
     // 2. 음식 주기
     public void EndDragAction()
     {
-        if (havingFoods.Count == 0)
+        if (food is null)
             return;
 
         Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -101,26 +124,20 @@ public class SelectedFood : MonoBehaviour
             // 사운드
             AudioManager.instance.PlaySFX(SFXClip.EATTING);
 
-            foreach (Food f in DataManager.instance.userData.foods)
-            {
-                if (f == food)
-                {
-                    food.count -= 1;
-                    break;
-                }
-            }
+            food.count -= 1;
 
-            // 먹인 후
+            // 먹인 후 - 캐릭터
+            UIManager.instance.CharacterFavorUp(food.favor);
+            UIManager.instance.CharacterFullnessUp(food.fullness);
+
+            // 먹인 후 - 음식
             gameObject.SetActive(false);
+            UIManager.instance.FoodChange(food);
 
-            UIManager.instance.FoodChange(food.fullness, food.favor);
-
-            if (food is null || food.count == 0) // 해당 food 다 먹은 경우
+            if (food.count == 0) // 해당 food 다 먹은 경우
                 ChangeFoodAction(1);
             else
                 foodTxt.text = food.kr_name + " x" + food.count;
-
-            havingFoods = DataManager.instance.LoadHavingFoods();
 
             gameObject.transform.position = initPos;
             gameObject.SetActive(true);
@@ -128,10 +145,11 @@ public class SelectedFood : MonoBehaviour
         }
         else
         {
-            if (GameManager.instance.curCharacter.fullness >= 100){
+            if (GameManager.instance.curCharacter.fullness >= 100)
+            {
                 print("배부러링");
             }
-            
+
             AudioManager.instance.PlaySFX(SFXClip.FAIL);
             gameObject.transform.position = initPos;
         }
