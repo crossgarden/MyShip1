@@ -13,9 +13,19 @@ public class AudioManager : MonoBehaviour
     public AudioClip[] sfxClips;
     public AudioClip[] bgmClips;
 
+    public enum SFXClip { NONE = -1, FAIL, EATTING, SLIDE, BUY, CLICK, SUCCESS, MAX }
+    public enum BGMClip { NONE = -1, MAX }
+
     private void Awake()
     {
-        instance = this;
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+            Destroy(gameObject);
+
     }
 
     void Start()

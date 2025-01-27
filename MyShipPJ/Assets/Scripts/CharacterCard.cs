@@ -12,28 +12,37 @@ public class CharacterCard : MonoBehaviour
     public Image image, selectedChecked;
     public TextMeshProUGUI nameTxt, dateTxt, introTxt, levelTxt;
     public Transform scriptContainer;
-    public Slider fullnessSlider, energySlider;
+    public Slider fullnessSlider, energySlider, favorSlider;
     public Image fullnessFill, energyFill;
+    public GameObject spotlight;
 
     public void SetUI(Character character, int index)
     {
-        this.image.sprite = Resources.Load<Sprite>(path + character.name + "_all");
+        this.character = character;
+        image.sprite = Resources.Load<Sprite>(path + character.name + "_all");
         // if (PlayerPrefs.GetInt("CurCharacter", 0) == index)
         //     this.selectedChecked.sprite = Resources.Load<Sprite>(path + "checked"); // 아직 이미지 안만듦
         // else
         //     this.selectedChecked.sprite = Resources.Load<Sprite>(path + "unchecked"); // 아직 이미지 안만듦
-        this.nameTxt.text = character.kr_name;
-        this.introTxt.text = character.introduction;
-        this.levelTxt.text = character.level.ToString();
-        this.fullnessSlider.value = character.fullness;
-        this.energySlider.value = character.energy;
+        nameTxt.text = character.kr_name;
+        introTxt.text = character.introduction;
+        levelTxt.text = character.level.ToString();
+
+        favorSlider.maxValue = DataManager.instance.favorMax[character.level];
+        favorSlider.value = character.favor;
+        fullnessSlider.value = character.fullness;
+        energySlider.value = character.energy;
         UIManager.instance.SetSliderFillColor(fullnessSlider, fullnessFill);
         UIManager.instance.SetSliderFillColor(energySlider, energyFill);
 
-        if(character.locked == 0)
+        spotlight.SetActive(character == GameManager.instance.curCharacter);
+        
+        if (character.locked == 0)
         {
             this.dateTxt.text = "획득일: " + character.unlockDate;
-        }else{
+        }
+        else
+        {
             dateTxt.text = "획득일: " + "-";
         }
 
@@ -50,4 +59,18 @@ public class CharacterCard : MonoBehaviour
         }
     }
 
+    // public void Click()
+    // {
+    //     print("click");
+    // }
+
+    public void ChangeSpotlight()
+    {
+        spotlight.SetActive(spotlight.activeSelf == false);
+    }
+
+    public void UpdateEnergy(){
+        energySlider.value = character.energy;
+        UIManager.instance.SetSliderFillColor(energySlider, energyFill);
+    }
 }

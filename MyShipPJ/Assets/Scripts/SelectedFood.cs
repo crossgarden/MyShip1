@@ -122,7 +122,7 @@ public class SelectedFood : MonoBehaviour
         if (GameManager.instance.curCharacter.fullness < 100 && pos.x > goalPosMin.x && pos.x < goalPosMax.x && pos.y > goalPosMin.y && pos.y < goalPosMax.y)  // 수정 - 좌표 이렇게 하드코딩 해도 되나?
         {
             // 사운드
-            AudioManager.instance.PlaySFX(SFXClip.EATTING);
+            AudioManager.instance.PlaySFX(AudioManager.SFXClip.EATTING);
 
             food.count -= 1;
 
@@ -150,7 +150,7 @@ public class SelectedFood : MonoBehaviour
                 print("배부러링");
             }
 
-            AudioManager.instance.PlaySFX(SFXClip.FAIL);
+            AudioManager.instance.PlaySFX(AudioManager.SFXClip.FAIL);
             gameObject.transform.position = initPos;
         }
     }

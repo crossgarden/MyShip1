@@ -43,7 +43,7 @@ public class FoodShopItem : MonoBehaviour
 
     public void BuyAction()
     {
-        AudioManager.instance.PlaySFX(SFXClip.BUY);
+        AudioManager.instance.PlaySFX(AudioManager.SFXClip.BUY);
 
         DataManager.instance.userData.coin -= food.cost;
         food.count += 1;

@@ -42,7 +42,7 @@ public class WallpaperItem : MonoBehaviour
 
     // 벽지 구매
     public void BuyBtnAction(){
-        AudioManager.instance.PlaySFX(SFXClip.SUCCESS);
+        AudioManager.instance.PlaySFX(AudioManager.SFXClip.SUCCESS);
 
         DataManager.instance.userData.coin -= wallpaper.cost;
         UIManager.instance.SetCoinUI();
@@ -64,7 +64,7 @@ public class WallpaperItem : MonoBehaviour
 
     // 벽지 선택
     public void SelecteWallpaper(){
-        AudioManager.instance.PlaySFX(SFXClip.CLICK);
+        AudioManager.instance.PlaySFX(AudioManager.SFXClip.CLICK);
         PlayerPrefs.SetInt((int)wallpaper.roomNum + "_wallpaper", wallpaper.id);
         UIManager.instance.ChangeWallpaper(wallpaper);
         checkedImg.SetActive(true);

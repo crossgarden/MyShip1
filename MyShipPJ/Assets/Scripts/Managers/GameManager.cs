@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using GameData;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -14,6 +15,8 @@ public class GameManager : MonoBehaviour
     public List<Character> characters;
     readonly int decayRateFullness = 108; // 초당 감소율. 108: 3시간동안 100 > 0
     readonly int improveRate = 12;  // 20분동안 0 > 100
+
+    public bool needUpdateCharacters = false;
 
     private DateTime offTime;
 
@@ -41,7 +44,7 @@ public class GameManager : MonoBehaviour
 
     /** [ - ] 시스템 */
 
-    /** 1. 백그라운드 계산을 위한 종료시 현재시간 저장(scence 전환시에도 필요하나?) */
+    /** 1. 백그라운드 계산을 위한 종료시 현재시간 저장 */
     void OnApplicationQuit()
     {
         // 종료 시 현재 시간을 저장
@@ -84,8 +87,8 @@ public class GameManager : MonoBehaviour
             curCharacter.fullness -= 1;
             DataManager.instance.saveData();
 
-            UIManager.instance.UpdateCharacterList();
-
+            if(SceneManager.GetActiveScene().name == "MainScence")
+                UIManager.instance.UpdateCurCharacter();
         }
     }
 
@@ -104,7 +107,9 @@ public class GameManager : MonoBehaviour
                 curCharacter.energy = Mathf.Max(curCharacter.energy - 1, 0);
 
             DataManager.instance.saveData();
-            UIManager.instance.UpdateCharacterList();
+
+            if(SceneManager.GetActiveScene().name == "MainScence")
+                UIManager.instance.UpdateEnergyCharacterList();
         }
     }
 
@@ -115,27 +120,6 @@ public class GameManager : MonoBehaviour
         characters = DataManager.instance.characterSotred;
         int index = PlayerPrefs.GetInt("CurCharacter", 0);
         curCharacter = DataManager.instance.characterSotred[index];
-    }
-
-    /** 2. 캐릭터 교체 - index로 */
-    public void CharacterChange(int index)
-    {
-        PlayerPrefs.SetInt("CurCharacter", index);
-        curCharacter = characters[index];
-
-        UIManager.instance.CharacterChangeUI();
-    }
-
-    /** 2. 캐릭터 교체 - Charater로 */
-    public void CharacterChange(Character character)
-    {
-        // for(int i = 0 ; i < characters.Count ; i++){
-        //     if(characters[i] == character){
-        //         PlayerPrefs.SetInt("CurCharacter", i);
-        //         curCharacter = DataManager.instance.characterSotred[i];
-        //         break;
-        //     }
-        // }
     }
 
 

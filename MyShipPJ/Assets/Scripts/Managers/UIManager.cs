@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using GameData;
 using TMPro;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -39,6 +40,11 @@ public class UIManager : MonoBehaviour
     public GameObject CharacterCardPrefab;
 
     /** 0. 대기실 */
+    [Header("watting room")]
+    public List<Game> games;
+    public GameObject gamePrefab;
+    public GameObject gamesPanel;
+    public GameObject gameContent;
 
     /** 1. 개인실 */
     [Header("private room")]
@@ -85,6 +91,7 @@ public class UIManager : MonoBehaviour
         InitFoodShop();
         InitWallPaperList();
         InitWallpaper();
+        InitGameList();
 
         if (PlayerPrefs.GetInt("CurRoom", 0) == (int)RoomNum.PRIVATE)
         {
@@ -99,20 +106,21 @@ public class UIManager : MonoBehaviour
         characters = DataManager.instance.characterSotred;
         foods = DataManager.instance.userData.foods;
         wallpapers = DataManager.instance.userData.wallpapers;
+        games = DataManager.instance.userData.games;
     }
 
     /** [1-4] 공용 */
     /** 1. 팝업 열기 */
     public void OpenPopUP(GameObject popupPanel)
     {
-        AudioManager.instance.PlaySFX(SFXClip.CLICK);
+        AudioManager.instance.PlaySFX(AudioManager.SFXClip.CLICK);
         popupPanel.SetActive(true);
     }
 
     /** 2. 팝업 닫기 */
     public void ClosePopUp(GameObject popupPanel)
     {
-        AudioManager.instance.PlaySFX(SFXClip.CLICK);
+        AudioManager.instance.PlaySFX(AudioManager.SFXClip.CLICK);
         popupPanel.SetActive(false);
     }
 
@@ -130,9 +138,13 @@ public class UIManager : MonoBehaviour
     }
 
     /** 4. 캐릭터 체인지 */
-    public void CharacterChangeUI()
+    public void CharacterChangeUI(int index)
     {
-        curCharacter = GameManager.instance.curCharacter;
+        UpdateSpotlight();
+        curCharacter = characters[index];
+        GameManager.instance.curCharacter = curCharacter;
+        PlayerPrefs.SetInt("CurCharacter", index);
+        UpdateSpotlight();
 
         // top bar 변경
         SetFavorUI();
@@ -145,7 +157,6 @@ public class UIManager : MonoBehaviour
         // 캐릭터 리스트 팝업 닫기
         CharacterListPanel.SetActive(false);
     }
-
 
     /*************** [2-6] top bar 세팅 **********************/
     /** 2. 호감도 UI 업데이트 */
@@ -244,7 +255,7 @@ public class UIManager : MonoBehaviour
     /** 2. 캐릭터 리스트 버튼 액션 */
     public void CharacterListAction()
     {
-        AudioManager.instance.PlaySFX(SFXClip.CLICK);
+        AudioManager.instance.PlaySFX(AudioManager.SFXClip.CLICK);
 
         CharacterListScroll scrollScript = CharacterListScrollView.GetComponent<CharacterListScroll>();
         CharacterListPanel.SetActive(true);
@@ -254,14 +265,14 @@ public class UIManager : MonoBehaviour
         scrollScript.contentTransform.GetChild(scrollScript.targetPos).GetChild(1).GetComponent<Scrollbar>().value = 1;
     }
 
-    /** 3. 캐릭터 리스트 갱신 */
-    public void UpdateCharacterList()
+    /** 3. 캐릭터 리스트의 에너지만 갱신 */
+    public void UpdateEnergyCharacterList()
     {  // 아이템을 재생성 하지 않고 내용만 업데이트
         for (int i = 0; i < characters.Count; i++)
         {
             Transform card = characterListContent.transform.GetChild(i);
             CharacterCard cardScript = card.GetComponent<CharacterCard>();
-            cardScript.SetUI(characters[i], i);
+            cardScript.UpdateEnergy();
         }
     }
 
@@ -274,23 +285,46 @@ public class UIManager : MonoBehaviour
         cardScript.SetUI(characters[index], index);
     }
 
-    // Room 0 - 대기실
+    /** 5. 현재 캐릭터의 spotlight만 갱신 */
+    public void UpdateSpotlight()
+    {
+        int index = PlayerPrefs.GetInt("CurCharacter", 0);
+        Transform card = characterListContent.transform.GetChild(index);
+        CharacterCard cardScript = card.GetComponent<CharacterCard>();
+        cardScript.ChangeSpotlight();
+    }
+
+
+    /*********************** [1-3] 0. 대기실 **************************/
+    public void InitGameList()
+    {
+        foreach (Game game in games)
+        {
+            GameObject gameItem = Instantiate(gamePrefab, transform.position, quaternion.identity);
+            GameItem gameItemScript = gameItem.GetComponent<GameItem>();
+            gameItem.name = game.name;
+            gameItemScript.SetUI(game);
+
+            gameItem.transform.SetParent(gameContent.transform, false);
+            gameItem.SetActive(true);
+        }
+
+    }
+
+    public void GameListAction()
+    {
+        print("PlayAction");
+    }
+
+
     public void ExitAction()
     {
         print("ExitAction");
     }
 
-    public void PlayAction()
-    {
-        print("PlayAction");
-    }
 
-    // Room 1 - 개인실 
-    public void ClothesAction()
-    {
-        print("ClothesAction");
-    }
 
+    /*********************** [1-7] 1. 개인실 **************************/
     /** 1. 전등 버튼 액션 */
     public void LightAction()
     {
@@ -303,7 +337,7 @@ public class UIManager : MonoBehaviour
     /** 2. 벽지 리스트 버튼 액션 */
     public void WallPaperAction()
     {
-        AudioManager.instance.PlaySFX(SFXClip.CLICK);
+        AudioManager.instance.PlaySFX(AudioManager.SFXClip.CLICK);
 
         RectTransform rt = wallPaperContents[PlayerPrefs.GetInt("WallpaperRoomNum", 0)].transform.GetComponent<RectTransform>();
         rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, 0);
@@ -354,30 +388,42 @@ public class UIManager : MonoBehaviour
     }
 
     /** 6. 벽지 초기화 */
-    public void InitWallpaper(){
+    public void InitWallpaper()
+    {
         Sprite[] paperSprites = new Sprite[WallpaperContainer.childCount];
 
-        for(int i = 0 ; i < WallpaperContainer.childCount ; i++){
-            int paper = PlayerPrefs.GetInt(i+"_wallpaper",0);
+        for (int i = 0; i < WallpaperContainer.childCount; i++)
+        {
+            int paper = PlayerPrefs.GetInt(i + "_wallpaper", 0);
 
-            foreach(Wallpaper wallpaper in wallpapers){
-                if(wallpaper.id==paper){
+            foreach (Wallpaper wallpaper in wallpapers)
+            {
+                if (wallpaper.id == paper)
+                {
                     paperSprites[i] = Resources.Load<Sprite>("Sprites/Items/Wallpapers/" + i + "_" + wallpaper.name);
-                    print(wallpaper.name);
                     break;
                 }
             }
         }
-        for (int i = 0; i < WallpaperContainer.childCount; i++){
+        for (int i = 0; i < WallpaperContainer.childCount; i++)
+        {
             WallpaperContainer.transform.GetChild(i).GetComponent<SpriteRenderer>().sprite = paperSprites[i];
         }
     }
 
-    /******************* [1-8] Room 2 - 식당 ********************/
+    /** 7. 옷장 버튼 액션 */
+    public void ClothesAction()
+    {
+        print("ClothesAction");
+    }
+
+
+
+    /********************* [1-8] 2. 식당 ******************************/
     // 1. 냉장고 버튼 액션
     public void RefrigeratorAction()
     {
-        AudioManager.instance.PlaySFX(SFXClip.CLICK);
+        AudioManager.instance.PlaySFX(AudioManager.SFXClip.CLICK);
         refrigeratorPanel.SetActive(true);
     }
 
@@ -409,7 +455,7 @@ public class UIManager : MonoBehaviour
     /** 4. food shop 버튼 액션 */
     public void FoodShopAction()
     {
-        AudioManager.instance.PlaySFX(SFXClip.CLICK);
+        AudioManager.instance.PlaySFX(AudioManager.SFXClip.CLICK);
         refrigeratorPanel.SetActive(false);
         foodShopPanel.SetActive(true);
     }
@@ -441,7 +487,7 @@ public class UIManager : MonoBehaviour
     /** 5. food shop (+냉장고) 닫기 버튼 액션 */
     public void CloseFoodShopAction()
     {
-        AudioManager.instance.PlaySFX(SFXClip.CLICK);
+        AudioManager.instance.PlaySFX(AudioManager.SFXClip.CLICK);
         foodShopPanel.SetActive(false);
     }
 

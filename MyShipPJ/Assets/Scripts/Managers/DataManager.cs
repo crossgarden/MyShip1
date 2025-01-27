@@ -36,9 +36,8 @@ public class DataManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
         }
         else
-        {
             Destroy(gameObject);
-        }
+        
 
         userData = new UserData();
         // systemData = new SystemData();

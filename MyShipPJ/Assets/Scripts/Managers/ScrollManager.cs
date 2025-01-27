@@ -61,7 +61,7 @@ public class ScrollManager : MonoBehaviour
         if (curRoom + next < 0 || curRoom + next >= backgrounds.Count)
             return;
 
-        AudioManager.instance.PlaySFX(GameData.SFXClip.SLIDE);
+        AudioManager.instance.PlaySFX(AudioManager.SFXClip.SLIDE);
         curRoom = Mathf.Clamp(curRoom + next, 0, backgrounds.Count - 1);
         PlayerPrefs.SetInt("CurRoom", curRoom);
         needUIChange = true;
