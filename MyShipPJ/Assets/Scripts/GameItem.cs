@@ -23,6 +23,7 @@ public class GameItem : MonoBehaviour
 
     public void StartGame()
     {
+        PlayerPrefs.SetInt("CurGame", game.id);
         SceneManager.LoadScene("G_" + game.name);
     }
 

@@ -16,6 +16,8 @@ public class AudioManager : MonoBehaviour
     public enum SFXClip { NONE = -1, FAIL, EATTING, SLIDE, BUY, CLICK, SUCCESS, MAX }
     public enum BGMClip { NONE = -1, MAX }
 
+    public List<AudioSource> tempSources;
+
     private void Awake()
     {
         if (instance == null)
@@ -30,6 +32,7 @@ public class AudioManager : MonoBehaviour
 
     void Start()
     {
+        StartCoroutine(ClearTemp());
         // sfxSources = new List<AudioSource>();
 
         // for(int i = 0 ; i < (int)SFXClip.MAX ; i++){
@@ -41,8 +44,35 @@ public class AudioManager : MonoBehaviour
 
     public void PlaySFX(SFXClip clip)
     {
-        sfxSources.clip = sfxClips[(int)clip];
-        sfxSources.Play();
+        if (sfxSources.isPlaying)
+        {
+            tempSources.Add(gameObject.AddComponent<AudioSource>());
+            tempSources[tempSources.Count - 1].clip = sfxClips[(int)clip];
+            tempSources[tempSources.Count - 1].Play();
+
+        }
+        else
+        {
+            sfxSources.clip = sfxClips[(int)clip];
+            sfxSources.Play();
+        }
+    }
+
+    IEnumerator ClearTemp()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(10f);
+            for (int i = 0; i < tempSources.Count; i++)
+            {
+                if (!tempSources[i].isPlaying)
+                {
+                    Destroy(tempSources[i]);
+                    tempSources.RemoveAt(i);
+                    i--;
+                }
+            }
+        }
     }
 
     public void PlayBGM(BGMClip clip)

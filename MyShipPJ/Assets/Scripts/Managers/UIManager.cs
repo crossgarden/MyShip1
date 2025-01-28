@@ -9,7 +9,6 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-
     public static UIManager instance;
 
     private void Awake()
@@ -124,6 +123,7 @@ public class UIManager : MonoBehaviour
         popupPanel.SetActive(false);
     }
 
+
     /** 3. Slider fill 색깔 */
     public void SetSliderFillColor(Slider slider, Image fill)
     {
@@ -230,7 +230,6 @@ public class UIManager : MonoBehaviour
         }
         coinTxt.text = txt;
     }
-
 
 
 

@@ -10,3 +10,5 @@ PlayerPrefs 정리
 	ㄴ 1_wallpaper
 	ㄴ 2_wallpaper
 - SelectedFood
+
+- CurGame

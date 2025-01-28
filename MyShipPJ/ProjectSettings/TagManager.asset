@@ -6,6 +6,7 @@ TagManager:
   tags:
   - ParentScroll
   - RefrigeratorScrollRect
+  - Coin
   layers:
   - Default
   - TransparentFX
@@ -17,8 +18,8 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
+  - Coin
+  - Player
   - 
   - 
   - 
