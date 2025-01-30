@@ -60,6 +60,7 @@ namespace GameData
         public int energy;
         public int locked;
         public string unlockDate;
+        public string howToGet;
         public string introduction;
         public string[] script;
 
@@ -75,7 +76,7 @@ namespace GameData
         public int id;
         public string name;
         public string kr_name;
-        public string discript;
+        public string descript;
         public string howToGet;
         public int locked;
         public string getDate;
@@ -93,6 +94,7 @@ namespace GameData
         public int id;
         public string name;
         public string kr_name;
+        public string descript;
         public int high_score;
     }
 }

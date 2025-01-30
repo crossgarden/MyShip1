@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using GameData;
 using TMPro;
 using Unity.Mathematics;
@@ -11,7 +10,14 @@ using UnityEngine.UI;
 public class STHManager : MonoBehaviour
 {
     Game game;
-    public TextMeshProUGUI scoreTxt;
+
+    [Header("TopBar")]
+    public GameObject topBar;
+
+    [Header("GameTopBar")]
+    public GameObject gameTopBar;
+    public TextMeshProUGUI scoreTxt, coinTxt, overCoinTxt;
+    int coin = 0;
     public int score = 0;
 
     const int UP = 0;
@@ -19,45 +25,53 @@ public class STHManager : MonoBehaviour
     const int LEFT = -1;
     const int RIGHT = 1;
 
+    [Header("Player")]
     public GameObject player;
     public Transform playerContainer;
     int playerDir = LEFT;  // -1 - 왼쪽, 1 - 오른쪽
 
-    readonly int tileCount = 40;
+    [Header("Tile")]
     public List<int> tiles = new List<int>(40);  // 0: 오르기 , 1:시프트
-    Vector3 tileSize;
-    int tileDir = LEFT;
-    int maxStraight = 0;
-
+    public List<bool> isCoin = new List<bool>(40); // true - 코인 있음
+    public List<GameObject> coinTile = new List<GameObject>();
     public GameObject tilePrefab;
     public GameObject coinTilePrefab;
     public Transform firstTile;
+    Vector3 tileSize;
+    int tileDir = LEFT;
+    int maxStraight = 0;
+    readonly int tileCount = 40;
     Vector3 tilePos;
+
+    [Header("TileContainer")]
     public Transform tilesContainer1;
     public Transform tilesContainer2;
     public GameObject bottomContainer;
     int whichTiles = 2;
 
+    [Header("Background")]
     public List<Transform> backgrounds;
     Vector3 bgSize;
     readonly float x = 6.25f;
     readonly float y = -13f;
 
+    [Header("TimeLimit")]
     public Slider HPSlider;
     public Image HPSliderFill;
     public float stayTime = 0;
     float limit = 2f;
     bool start = false;
-
     readonly float[] timeLimit = { 2.2f, 2f, 1.8f, 1.6f, 1.4f, 1.2f, 1f, 0.8f, 0.8f, 0.8f, 0.8f };    // 10초 경과할 때마다 제한 올리기기
     int timeLimitIndex = 0;
 
+    [Header("Pause & GameOver")]
     public GameObject gameOverPanel, reStartBtn, returnBtn;
     public TextMeshProUGUI overTxt, overScoreTxt, HighScoreTxt;
     bool pause = false;
 
     void Start()
     {
+        GameManager.instance.returnFromGame = true;
         game = DataManager.instance.userData.games[PlayerPrefs.GetInt("CurGame")];
         // 캐릭터 생성
         GameObject playerPrefab = Resources.Load<GameObject>("Prefabs/Characters/" + GameManager.instance.curCharacter.name);
@@ -97,7 +111,7 @@ public class STHManager : MonoBehaviour
     void Update()
     {
         if (pause) return;
-        
+
         stayTime += Time.deltaTime;
         HPSlider.value -= Time.deltaTime;
         SetSliderColor();
@@ -138,6 +152,7 @@ public class STHManager : MonoBehaviour
         HPSliderFill.color = new Color(red / 255, green / 255, 0);
     }
 
+    // 처음 두 타일 초기화
     void InitTile()
     {
         tilePos = firstTile.position;
@@ -153,10 +168,18 @@ public class STHManager : MonoBehaviour
 
             GameObject tile;
 
-            if (UnityEngine.Random.Range(0, 3) == 0)
+            bool createCoin = UnityEngine.Random.Range(0, 3) == 0;
+
+            if (createCoin)
+            {
                 tile = Instantiate(coinTilePrefab, transform.position, quaternion.identity);
+                coinTile.Add(tile);
+            }
+
             else
                 tile = Instantiate(tilePrefab, transform.position, quaternion.identity);
+
+            isCoin.Add(createCoin);
 
             tile.transform.SetParent(tilesContainer1, false);
             tile.transform.position = tilePos;
@@ -177,10 +200,16 @@ public class STHManager : MonoBehaviour
 
             GameObject tile;
 
-            if (UnityEngine.Random.Range(0, 3) == 0)
+            bool createCoin = UnityEngine.Random.Range(0, 3) == 0;
+            if (createCoin)
+            {
                 tile = Instantiate(coinTilePrefab, transform.position, quaternion.identity);
+                coinTile.Add(tile);
+            }
             else
                 tile = Instantiate(tilePrefab, transform.position, quaternion.identity);
+
+            isCoin.Add(createCoin);
 
             tile.transform.position = tilePos;
             tile.transform.SetParent(tilesContainer2, false);
@@ -200,6 +229,9 @@ public class STHManager : MonoBehaviour
         HPSlider.value = HPSlider.maxValue;
 
         AudioManager.instance.PlaySFX(AudioManager.SFXClip.CLICK);
+
+
+        /**
         if (isShift == 1)
         {
             playerDir *= -1;
@@ -238,8 +270,10 @@ public class STHManager : MonoBehaviour
         else
             Fail(true);
 
+        */
+
         /** 테스트용 무조건 성공 코드*/
-        /**
+
         if (tiles[0] == 1)
         {
             playerDir *= -1;
@@ -273,13 +307,24 @@ public class STHManager : MonoBehaviour
             bg.position = bgPos;
         }
         Success();
-        */
+
 
     }
 
     public void Success()
     {
         tiles.RemoveAt(0);
+
+        if (isCoin[0])
+        {
+            GetCoin(1);
+            coinTile[0].transform.GetChild(0).gameObject.SetActive(false);
+            coinTile.RemoveAt(0);
+        }
+
+        isCoin.RemoveAt(0);
+
+
         int x = UnityEngine.Random.Range(0, 5);
         if (x == 4 || maxStraight == 5)
         {
@@ -311,9 +356,19 @@ public class STHManager : MonoBehaviour
         }
     }
 
+    void GetCoin(int coinValue)
+    {
+        DataManager.instance.userData.coin += coinValue;
+        AudioManager.instance.PlaySFX(AudioManager.SFXClip.SUCCESS);
+        coin += coinValue;
+        coinTxt.text = coin.ToString();
+        overCoinTxt.text = "+ " + coin.ToString();
+    }
+
     // 타일 재생성 후 위로 올리기 
     void CreateTileContainer(Transform newContainer, Transform oldContainer)
     {
+        // 아래로 내려간 타일 복사본 만들어서 유지
         if (bottomContainer != null)
             Destroy(bottomContainer);
 
@@ -325,6 +380,7 @@ public class STHManager : MonoBehaviour
             Destroy(newContainer.GetChild(i).gameObject);
         }
 
+        // 아래 타일 위로 올리기( newContainer )
         tilePos = oldContainer.GetChild(oldContainer.childCount - 1).position;
         newContainer.position = new Vector3(0, tilePos.y, 0);
         tilePos = new Vector3(tilePos.x, 0, 0);
@@ -339,35 +395,49 @@ public class STHManager : MonoBehaviour
 
             GameObject tile;
 
-            if (UnityEngine.Random.Range(0, 3) == 0)
-                tile = Instantiate(coinTilePrefab, tilePos, quaternion.identity);
-            else
-                tile = Instantiate(tilePrefab, tilePos, quaternion.identity);
+            bool createCoin = UnityEngine.Random.Range(0, 3) == 0;
+            isCoin.Add(createCoin);
 
+            if (createCoin)
+            {
+                tile = Instantiate(coinTilePrefab, transform.position, quaternion.identity);
+                coinTile.Add(tile);
+            }
+
+            else
+            {
+                tile = Instantiate(tilePrefab, transform.position, quaternion.identity);
+            }
+
+            tile.transform.position = tilePos;
             tile.transform.SetParent(newContainer, false);
             tile.SetActive(true);
+
         }
     }
 
     public void Fail(bool isFail)
     {
+        pause = true;
+        Time.timeScale = 0;
+        StopCoroutine("UpTimeLimit");
+
+        topBar.GetComponent<TopBar>().SetUI();
+        topBar.SetActive(true);
+        gameTopBar.SetActive(false);
+
         if (score > game.high_score)
         {
             game.high_score = score;
         }
 
         if (isFail)
-        {
             overTxt.text = "게임오버";
-            reStartBtn.SetActive(true);
-            returnBtn.SetActive(false);
-        }
         else
-        {
             overTxt.text = "일시정지";
-            reStartBtn.SetActive(false);
-            returnBtn.SetActive(true);
-        }
+
+        reStartBtn.SetActive(isFail);
+        returnBtn.SetActive(!isFail);
 
         overScoreTxt.text = "점수: " + score;
         HighScoreTxt.text = "최고: " + game.high_score;
@@ -378,26 +448,24 @@ public class STHManager : MonoBehaviour
 
     public void ReStartAction()
     {
+        Time.timeScale = 1;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    public void PauseAction()
+    public void ReturnAction()
     {
-        pause = true;
-        Time.timeScale = 0;
-        StopCoroutine("UpTimeLimit");
-        Fail(false);
-    }
-
-    public void returnAction(){
         pause = false;
         Time.timeScale = 1;
         StartCoroutine("UpTimeLimit");
         gameOverPanel.SetActive(false);
+
+        topBar.SetActive(false);
+        gameTopBar.SetActive(true);
     }
 
     public void ExitAction()
     {
+        Time.timeScale = 1;
         SceneManager.LoadScene("MainScene");
     }
 }

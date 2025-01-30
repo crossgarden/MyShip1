@@ -65,7 +65,6 @@ public class ScrollManager : MonoBehaviour
         curRoom = Mathf.Clamp(curRoom + next, 0, backgrounds.Count - 1);
         PlayerPrefs.SetInt("CurRoom", curRoom);
         needUIChange = true;
-
     }
 
     public void BottomBarUIChange()

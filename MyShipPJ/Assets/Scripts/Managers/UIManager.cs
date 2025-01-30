@@ -24,8 +24,8 @@ public class UIManager : MonoBehaviour
     /**  Top bar */
     [Header("top bar")]
     public TextMeshProUGUI coinTxt;
-    public Slider fullenssSlider;   // 포만도 값 설정
-    public Image fullnessFill;   // 포만도 게이지 색 설정
+    public Slider fullenssSlider;
+    public Image fullnessFill;
     public Slider energySlider;
     public Image energyFill;
     public Slider favorSlider;
@@ -44,6 +44,7 @@ public class UIManager : MonoBehaviour
     public GameObject gamePrefab;
     public GameObject gamesPanel;
     public GameObject gameContent;
+    public GameObject howToGamePanel;
 
     /** 1. 개인실 */
     [Header("private room")]
@@ -97,6 +98,9 @@ public class UIManager : MonoBehaviour
             lightImg.sprite = lightImgs[PlayerPrefs.GetInt("LightOn", 0)];
             lightOffPanel.SetActive(PlayerPrefs.GetInt("LightOn", 0) == 0);
         }
+
+        gamesPanel.SetActive(GameManager.instance.returnFromGame);
+        GameManager.instance.returnFromGame = false;
     }
 
     public void InitData()
@@ -295,6 +299,7 @@ public class UIManager : MonoBehaviour
 
 
     /*********************** [1-3] 0. 대기실 **************************/
+    /** 1. 게임 리스트 초기화 */
     public void InitGameList()
     {
         foreach (Game game in games)
@@ -307,21 +312,14 @@ public class UIManager : MonoBehaviour
             gameItem.transform.SetParent(gameContent.transform, false);
             gameItem.SetActive(true);
         }
-
     }
 
-    public void GameListAction()
-    {
-        print("PlayAction");
+    /** 2. 게임 씬 로드 */
+    /** GameItem에서 사용 */
+    public void SelectGame(Game game){
+        howToGamePanel.GetComponent<HowToGame>().SetUI(game);
+        howToGamePanel.SetActive(true);
     }
-
-
-    public void ExitAction()
-    {
-        print("ExitAction");
-    }
-
-
 
     /*********************** [1-7] 1. 개인실 **************************/
     /** 1. 전등 버튼 액션 */

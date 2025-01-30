@@ -18,13 +18,13 @@ public class GameItem : MonoBehaviour
         this.game = game;
         image.sprite = Resources.Load<Sprite>(path + game.name);
         nameTxt.text = game.kr_name;
-        gameObject.GetComponent<Button>().onClick.AddListener(StartGame);
+        gameObject.GetComponent<Button>().onClick.AddListener(SelectGame);
     }
 
-    public void StartGame()
+    public void SelectGame()
     {
         PlayerPrefs.SetInt("CurGame", game.id);
-        SceneManager.LoadScene("G_" + game.name);
+        UIManager.instance.SelectGame(game);
     }
 
 }

@@ -22,7 +22,7 @@ public class WallpaperItem : MonoBehaviour
         this.wallpaper = wallpaper;
         img.sprite = Resources.Load<Sprite>(path + (int)wallpaper.roomNum + "_" + wallpaper.name);
         nameTxt.text = wallpaper.name;
-        discrptTxt.text = "▶ " + wallpaper.discript;
+        discrptTxt.text = "▶ " + wallpaper.descript;
         howToGetTxt.text = wallpaper.howToGet;
         getDateTxt.text = "획득일: " + wallpaper.getDate;
         lockedHowToGetTxt.text = wallpaper.howToGet;

@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using GameData;
 using UnityEditor;
-using UnityEditor.iOS;
 using UnityEngine;
 
 public class MainChaContainer : MonoBehaviour

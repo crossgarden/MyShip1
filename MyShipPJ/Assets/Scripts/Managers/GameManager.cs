@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
+    public bool returnFromGame = false;
+
     public Character curCharacter;
     public List<Character> characters;
     readonly int decayRateFullness = 108; // 초당 감소율. 108: 3시간동안 100 > 0

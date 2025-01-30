@@ -10,17 +10,7 @@ public class PlayerContainer : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Coin")
-        {
-            AudioManager.instance.PlaySFX(AudioManager.SFXClip.SUCCESS);
-            GetCoin(1);
-            Destroy(other.gameObject);
-        }
-    }
-
-    private void OnTriggerStay2D(Collider2D other)
-    {
-        if (other != null && other.tag == "Coin")
+        if (other.gameObject.tag == "Coin")
         {
             AudioManager.instance.PlaySFX(AudioManager.SFXClip.SUCCESS);
             GetCoin(1);
