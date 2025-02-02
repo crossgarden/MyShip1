@@ -18,7 +18,7 @@ public class FoodItemScrollTossRefrigerator : ScrollRect
 
     public override void OnBeginDrag(PointerEventData eventData)
     {
-        forParent = Mathf.Abs(eventData.delta.y) > Mathf.Abs(eventData.delta.x); // 수직이동 > 냉장고 스크롤
+        forParent = Mathf.Abs(eventData.delta.y) > Mathf.Abs(eventData.delta.x); // 수직이동 -> 냉장고 스크롤
 
         if (forParent)
             refrigeratorScrollRect.OnBeginDrag(eventData);

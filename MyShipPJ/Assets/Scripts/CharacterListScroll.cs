@@ -66,12 +66,8 @@ public class CharacterListScroll : MonoBehaviour, IBeginDragHandler, IDragHandle
 
     public void CharacterChange()
     {
-        // Vector3 minPos = new Vector3(60f, 75f, 0);
-        // Vector3 maxPos = new Vector3(126f, 120f, 0);
-        // Vector3 pos = Camera.main.WorldToViewportPoint(Input.mousePosition);
-
-        // if (pos.x > minPos.x || pos.x < maxPos.x || pos.y > minPos.y || pos.y < maxPos.y){}   // 이거 수정해야됨 content를 위로 올릴수 있잖아아
-
+        if(DataManager.instance.characterSotred[targetPos].locked == 1)
+            return;
         AudioManager.instance.PlaySFX(AudioManager.SFXClip.CLICK);
         UIManager.instance.CharacterChangeUI(targetPos);
     }

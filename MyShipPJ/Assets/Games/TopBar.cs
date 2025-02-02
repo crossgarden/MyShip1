@@ -8,17 +8,16 @@ using GameData;
 public class TopBar : MonoBehaviour
 {
     public Character curCharacter;
-
     public TextMeshProUGUI coinTxt;
-
-    public Slider fullenssSlider;   // 포만도 값 설정
-    public Image fullnessFill;   // 포만도 게이지 색 설정
-
+    public Slider fullenssSlider;
+    public Image fullnessFill;
     public Slider energySlider;
     public Image energyFill;
-
     public Slider favorSlider;
     public TextMeshProUGUI characterLevelTxt;
+
+    public GameObject settingsPanel;
+    public GameObject coinShopPanel;
 
     void Start()
     {
@@ -33,7 +32,7 @@ public class TopBar : MonoBehaviour
         SetCoinUI();
     }
 
-    // 호감도
+    // 호감도 UI
     void SetFavorUI()
     {
         characterLevelTxt.text = curCharacter.level.ToString();
@@ -41,21 +40,21 @@ public class TopBar : MonoBehaviour
         favorSlider.value = curCharacter.favor;
     }
 
-    // 포만도 
+    // 포만도 UI
     void SetFullnessUI()
     {
         fullenssSlider.value = curCharacter.fullness;
         SetSliderFillColor(fullenssSlider, fullnessFill);
     }
 
-    // 에너지
+    // 에너지 UI
     void SetEnergyUI()
     {
         energySlider.value = curCharacter.energy;
         SetSliderFillColor(energySlider, energyFill);
     }
 
-    // 코인
+    // 코인 UI
     void SetCoinUI()
     {
         int coin = DataManager.instance.userData.coin;
@@ -67,6 +66,7 @@ public class TopBar : MonoBehaviour
         coinTxt.text = txt;
     }
 
+    // 슬라이더 컬러
     void SetSliderFillColor(Slider slider, Image fill)
     {
         if (slider.value < 30)
@@ -78,5 +78,20 @@ public class TopBar : MonoBehaviour
         else
             fill.color = new Color(64 / 255f, 149 / 255f, 255 / 255f);
     }
+    
+    // 코인샵 오픈
+    public void OpenCoinShop(){
+        coinShopPanel.SetActive(true);
+    }
+
+    // 코인샵 액션
+    public void BuyCoin(int value){
+
+    }
+
+    public void OpenSettingsPanel(){
+        settingsPanel.SetActive(true);
+    }
+
     
 }

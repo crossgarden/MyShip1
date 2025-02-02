@@ -1,0 +1,9 @@
+미니게임 추가할때
+> 메인 카메라에 latter box 컴포넌트 추가
+> 캔버스는 월드 스페이스로
+
+가져갈거:
+	- 매니저 - GameManaer, AudioManager, DataManager 
+		> 나중에 프리팹으로 만들거임
+	- 캔버스 - TopBar, GameOverPanel, CoinShopPanel, SettingsPanel
+		> 각자 조금씩 다를 수 있을거 같아서 굳이 프리팹으로 안만듦. 알아서 잘 조정...

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using GameData;
@@ -28,6 +29,7 @@ public class STHManager : MonoBehaviour
     [Header("Player")]
     public GameObject player;
     public Transform playerContainer;
+    public Animator playerAnim;
     int playerDir = LEFT;  // -1 - 왼쪽, 1 - 오른쪽
 
     [Header("Tile")]
@@ -50,18 +52,22 @@ public class STHManager : MonoBehaviour
     int whichTiles = 2;
 
     [Header("Background")]
-    public List<Transform> backgrounds;
+    public Transform bg1, bg2;
     Vector3 bgSize;
-    readonly float x = 6.25f;
+    // readonly float x = 6.25f;
     readonly float y = -13f;
+    Color blueColor = new Color(163 / 255f, 218 / 255f, 1f);
+    Color sunsetColor = new Color(1.0f, 195 / 255f, 87 / 255f);
+    Color nightColor = new Color(35 / 255f, 37 / 255f, 47 / 255f);
+    Color cloudGrey = new Color(169 / 255f, 169 / 255f, 169 / 255f);
 
     [Header("TimeLimit")]
     public Slider HPSlider;
     public Image HPSliderFill;
     public float stayTime = 0;
-    float limit = 2f;
     bool start = false;
     readonly float[] timeLimit = { 2.2f, 2f, 1.8f, 1.6f, 1.4f, 1.2f, 1f, 0.8f, 0.8f, 0.8f, 0.8f };    // 10초 경과할 때마다 제한 올리기기
+    float limit = 2.2f;
     int timeLimitIndex = 0;
 
     [Header("Pause & GameOver")]
@@ -78,6 +84,7 @@ public class STHManager : MonoBehaviour
         player = Instantiate(playerPrefab, new Vector3(0, -1, 0), quaternion.identity);
         player.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
         player.transform.SetParent(playerContainer, false);
+        playerAnim = player.GetComponent<Animator>();
         player.SetActive(true);
 
         // 타일 큐 생성
@@ -100,10 +107,10 @@ public class STHManager : MonoBehaviour
         }
 
         tileSize = tilePrefab.GetComponent<Renderer>().bounds.size;
-        bgSize = backgrounds[0].GetComponent<Renderer>().bounds.size;
+        bgSize = bg1.GetComponent<Renderer>().bounds.size;
 
         InitTile();
-        StartCoroutine("UpTimeLimit");
+        // StartCoroutine("UpTimeLimit");
 
         Time.timeScale = 0;
     }
@@ -130,6 +137,18 @@ public class STHManager : MonoBehaviour
         {
             Action(1);
         }
+
+
+        // 배경 색 변환
+        Color targetColor = GetTargetColor(score);
+        Color targetColorCloud = GetTargetColorCloud(score);
+
+        bg1.GetComponent<SpriteRenderer>().color = Color.Lerp(bg1.GetComponent<SpriteRenderer>().color, targetColor, Time.deltaTime * 2);
+        bg2.GetComponent<SpriteRenderer>().color = Color.Lerp(bg2.GetComponent<SpriteRenderer>().color, targetColor, Time.deltaTime * 2);
+
+        bg1.GetChild(0).GetComponent<SpriteRenderer>().color = Color.Lerp(bg1.GetChild(0).GetComponent<SpriteRenderer>().color, targetColorCloud, Time.deltaTime * 2);
+        bg2.GetChild(0).GetComponent<SpriteRenderer>().color = Color.Lerp(bg2.GetChild(0).GetComponent<SpriteRenderer>().color, targetColorCloud, Time.deltaTime * 2);
+
     }
 
     IEnumerator UpTimeLimit()
@@ -142,6 +161,48 @@ public class STHManager : MonoBehaviour
 
             timeLimitIndex++;
         }
+    }
+
+    // 배경 색 리턴
+    Color GetTargetColor(int score)
+    {
+        if (score < 50)
+            return blueColor;
+
+        // 50 ~ 200: 파란색 -> 노을색
+        if (score < 200)
+            return Color.Lerp(blueColor, sunsetColor, (score - 50) / 150f);
+
+        if (score < 250)
+            return sunsetColor;
+
+        // 250 ~ 300: 노을색 -> 밤색
+        if (score < 300)
+            return Color.Lerp(sunsetColor, nightColor, (score - 250) / 50f);
+
+        if (score < 250)
+            return nightColor;
+
+        // 350 ~ 500: 밤색 -> 파란색
+        if (score < 500)
+            return Color.Lerp(nightColor, blueColor, (score - 350) / 150f);
+
+        return GetTargetColor(score % 500);
+    }
+
+    Color GetTargetColorCloud(int score)
+    {
+        if (score < 200)
+            return Color.white;
+
+        // 200 ~ 300: 흰색 -> 회색
+        if (score < 300)
+            return Color.Lerp(Color.white, cloudGrey, (score - 200) / 300f);
+        // 300 ~ 500 : 회색 -> 흰색
+        if (score < 500)
+            return Color.Lerp(cloudGrey, Color.white, (score - 300) / 200f);
+
+        return GetTargetColorCloud(score % 500);
     }
 
     void SetSliderColor()
@@ -225,13 +286,15 @@ public class STHManager : MonoBehaviour
             Time.timeScale = 1;
         }
 
+        playerAnim.SetTrigger("walking");
+
         stayTime = 0;
         HPSlider.value = HPSlider.maxValue;
 
         AudioManager.instance.PlaySFX(AudioManager.SFXClip.CLICK);
 
 
-        /**
+
         if (isShift == 1)
         {
             playerDir *= -1;
@@ -240,40 +303,15 @@ public class STHManager : MonoBehaviour
             player.transform.localScale = playerPos;
         }
 
-        // 타일 아래로 내리기
-        Vector3 movement = Vector3.down * tileSize.y + new Vector3(-playerDir, 0, 0) * tileSize.x;
-        tilesContainer1.position += movement;
-        tilesContainer2.position += movement;
-
-        if (bottomContainer != null)
-            bottomContainer.transform.position += movement;
-
-        // 배경 내리기
-        foreach (Transform bg in backgrounds)
-            bg.position += movement / 4;
-
-        foreach (Transform bg in backgrounds)
-        {
-            Vector3 bgPos = bg.position;
-            if (bg.position.x >= x)
-                bgPos.x -= bgSize.x * 2;
-            if (bg.position.x <= -x)
-                bgPos.x += bgSize.x * 2;
-            if (bg.position.y <= y)
-                bgPos.y += bgSize.y * 2;
-
-            bg.position = bgPos;
-        }
+        DownBGAndTile();
 
         if (isShift == tiles[0])
             Success();
         else
             Fail(true);
 
-        */
 
-        /** 테스트용 무조건 성공 코드*/
-
+        /** 테스트용 무조건 성공 코드
         if (tiles[0] == 1)
         {
             playerDir *= -1;
@@ -282,6 +320,13 @@ public class STHManager : MonoBehaviour
             player.transform.localScale = playerPos;
         }
 
+        DownBGAndTile();
+        Success();
+*/
+    }
+
+    public void DownBGAndTile()
+    {
         // 타일 아래로 내리기
         Vector3 movement = Vector3.down * tileSize.y + new Vector3(-playerDir, 0, 0) * tileSize.x;
         tilesContainer1.position += movement;
@@ -291,26 +336,89 @@ public class STHManager : MonoBehaviour
             bottomContainer.transform.position += movement;
 
         // 배경 내리기
-        foreach (Transform bg in backgrounds)
-            bg.position += movement / 4;
+        bg1TargetPos = bg1.position + movement / 4;
+        bg2TargetPos = bg2.position + movement / 4;
 
-        foreach (Transform bg in backgrounds)
-        {
-            Vector3 bgPos = bg.position;
-            if (bg.position.x >= x)
-                bgPos.x -= bgSize.x * 2;
-            if (bg.position.x <= -x)
-                bgPos.x += bgSize.x * 2;
-            if (bg.position.y <= y)
-                bgPos.y += bgSize.y * 2;
-
-            bg.position = bgPos;
-        }
-        Success();
-
-
+        if (!smoothBGRunning)
+            StartCoroutine(SmoothBG());
     }
 
+    Vector3 bg1TargetPos, bg2TargetPos;
+    bool smoothBGRunning = false;
+
+    IEnumerator SmoothBG()
+    {
+        smoothBGRunning = true;
+        while (bg1.position != bg1TargetPos || bg2.position != bg2TargetPos)
+        {
+            yield return null;
+            bg2.position = Vector3.Lerp(bg2.position, bg2TargetPos, Time.deltaTime * 5);
+            bg1.position = Vector3.Lerp(bg1.position, bg1TargetPos, Time.deltaTime * 5);
+
+            if (bg1.position.y < y)
+            {
+                bg1.position = bg1TargetPos;
+                bg2.position = bg2TargetPos;
+                bg1.position += new Vector3(0, bgSize.y * 2 - 0.01f, 0);
+                break;
+            }
+
+            if (bg2.position.y < y)
+            {
+                bg1.position = bg1TargetPos;
+                bg2.position = bg2TargetPos;
+                bg2.position += new Vector3(0, bgSize.y * 2 - 0.01f, 0);
+                break;
+            }
+        }
+        smoothBGRunning = false;
+    }
+
+    /**   부드럽게 하는거 포기 ㅇㅇ
+        public void DownBGAndTile2()
+        {
+            // 타일 아래로 내리기
+            Vector3 movement = Vector3.down * tileSize.y + new Vector3(-playerDir, 0, 0) * tileSize.x;
+            float targetPosY = tilesContainer1.position.y + movement.y;
+            StartCoroutine(SmoothDownBGAndTile(movement, targetPosY));
+        }
+
+        IEnumerator SmoothDownBGAndTile(Vector3 movement, float targetPosY)
+        {
+            while (tilesContainer1.position.y > targetPosY)
+            {
+                yield return null;
+
+                Vector3 targetPos1 = tilesContainer1.position + movement;
+                Vector3 targetPos2 = tilesContainer2.position + movement;
+                Vector3 targetBottomPos = bottomContainer != null ? bottomContainer.transform.position + movement : Vector3.zero;
+
+                Vector3[] targetBgPositions = new Vector3[backgrounds.Count];
+                for (int i = 0; i < backgrounds.Count; i++)
+                {
+                    targetBgPositions[i] = backgrounds[i].position + movement / 4;
+                }
+
+                // 타일 컨테이너 이동
+                tilesContainer1.position = Vector3.Lerp(tilesContainer1.position, targetPos1, Time.deltaTime * 12);
+                tilesContainer2.position = Vector3.Lerp(tilesContainer2.position, targetPos2, Time.deltaTime * 12);
+
+                // 바닥 컨테이너 이동
+                if (bottomContainer != null)
+                {
+                    bottomContainer.transform.position = Vector3.Lerp(bottomContainer.transform.position, targetBottomPos, Time.deltaTime * 3);
+                }
+
+                // 배경 이동
+                for (int i = 0; i < backgrounds.Count; i++)
+                {
+                    backgrounds[i].position = Vector3.Lerp(backgrounds[i].position, targetBgPositions[i], Time.deltaTime * 3);
+                }
+
+
+            }
+        }
+*/
     public void Success()
     {
         tiles.RemoveAt(0);

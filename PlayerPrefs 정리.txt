@@ -1,4 +1,4 @@
-PlayerPrefs 정리
+< PlayerPrefs 정리 > 
 
 - CurCharacter
 
@@ -12,3 +12,14 @@ PlayerPrefs 정리
 - SelectedFood
 
 - CurGame
+
+- bgmVolume
+- sfxVolume
+
+- curBGM : 아직은 관련 기능x 
+
+
+
+< 설정 주의 사항 >
+userData.json에서
+character 정보 입력시 locked = 1 인 캐릭터의 unlock date는 "9"로 통일

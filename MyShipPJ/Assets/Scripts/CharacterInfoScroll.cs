@@ -5,13 +5,14 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CharacterInfoScroll : ScrollRect
+public class CharacterInfoScroll : ScrollRect, IPointerClickHandler
 {
 
     bool forParent;
     CharacterListScroll parentScrollScript;
     ScrollRect parentScrollRect;
 
+    bool isDrag = false;
 
     protected override void Start()
     {
@@ -21,6 +22,7 @@ public class CharacterInfoScroll : ScrollRect
 
     public override void OnBeginDrag(PointerEventData eventData)
     {
+        isDrag = true;
         forParent = Mathf.Abs(eventData.delta.x) > Mathf.Abs(eventData.delta.y); // 수평이동 > 부모 스크롤
 
         if (forParent)
@@ -34,6 +36,7 @@ public class CharacterInfoScroll : ScrollRect
 
     public override void OnDrag(PointerEventData eventData)
     {
+
         if (forParent)
         {
             parentScrollScript.OnDrag(eventData);
@@ -52,5 +55,14 @@ public class CharacterInfoScroll : ScrollRect
         }
         else
             base.OnEndDrag(eventData);
+        isDrag = false;
     }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (!isDrag)
+            gameObject.GetComponent<CharacterCard>().Click();
+    }
+
 }
+

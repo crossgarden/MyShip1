@@ -6,9 +6,9 @@
 
 1. 파이어베이스 프로젝트 생성 > 로그인 방법 추가 > sdk? json? 받음
 2. build setting > player setting > publishing setting > keystore 생성
-3. user.keystore 저장된 폴더에서 keytool -list -v -keystore user.keystore 실행
-	> SHA1 : D7:1A:05:80:FC:A2:3A:93:FF:61:5A:2C:4C:55:5C:D1:5A:57:EF:57
-	> SHA256: 74:7B:A3:C4:AE:27:1C:FC:BB:41:2E:94:5E:06:30:5B:67:FB:92:D2:AC:58:11:5F:6A:3D:78:F0:50:75:A2:95
+3. user.keystore 저장된 폴더에서 keytool -list -v -keystore user2.keystore 실행 (비번: 123456)
+	> SHA1 : 43:E3:FE:4F:3E:6D:A1:85:9F:E9:3B:C8:CD:B1:A2:01:56:46:E6:D1
+	> SHA256: 20:C8:69:FF:16:5F:ED:F4:5B:9E:0A:D6:B5:A7:3E:47:24:EF:BF:0D:F1:7A:2E:CF:CF:95:EE:10:A8:97:78:F0
 4. SHA1을 파이어베이스 프로젝스 세팅에 붙여넣고
 5. 구글 클라우드 콘솔에서 해당 프로젝트 사용자 인증 정보 보니까 뭐가 떠있음
 6. 내 Web Client ID : 369182402609-laecu4int0pnrrj9u269dqvbmedr360b.apps.googleusercontent.com

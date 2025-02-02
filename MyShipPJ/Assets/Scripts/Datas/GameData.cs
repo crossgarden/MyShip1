@@ -51,6 +51,7 @@ namespace GameData
     [Serializable]
     public class Character
     {
+        public int id;
         public string name;
         public string kr_name;
         public int cost;

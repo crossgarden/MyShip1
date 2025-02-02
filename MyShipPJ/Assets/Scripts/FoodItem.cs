@@ -12,7 +12,7 @@ public class FoodItem : MonoBehaviour
 
     string path = "Sprites/Items/Foods/";
     public Image img;
-    public TextMeshProUGUI countTxt, FullnessTxt, favorTxt, descript; // 추가 - descript는 나중에 꾹 누르면 말풍선 팝업으로 뜨게
+    public TextMeshProUGUI countTxt, FullnessTxt, favorTxt; 
 
     public void SetUI(Food food)
     {
@@ -21,7 +21,6 @@ public class FoodItem : MonoBehaviour
 
         FullnessTxt.text = food.fullness.ToString();
         favorTxt.text = food.favor.ToString();
-        descript.text = food.descript.ToString();
         img.sprite = Resources.Load<Sprite>(path + food.name);
         SetCount();
     }
@@ -32,10 +31,6 @@ public class FoodItem : MonoBehaviour
         gameObject.SetActive(food.count > 0);
     }
 
-    public void ViewDescriptionAction()
-    {
-
-    }
 
     public void SelectFoodAction()
     {

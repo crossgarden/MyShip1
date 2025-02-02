@@ -7,14 +7,17 @@ public class AudioManager : MonoBehaviour
 {
     public static AudioManager instance;
 
-    public AudioSource sfxSources;
+    public float bgmVolume;
+    public float sfxVolume;
+
+    public AudioSource sfxSource;
     public AudioSource bgmSource;
 
     public AudioClip[] sfxClips;
     public AudioClip[] bgmClips;
 
     public enum SFXClip { NONE = -1, FAIL, EATTING, SLIDE, BUY, CLICK, SUCCESS, MAX }
-    public enum BGMClip { NONE = -1, MAX }
+    public enum BGMClip { NONE = -1, When_I_Was_A_Boy, MAX }
 
     public List<AudioSource> tempSources;
 
@@ -32,7 +35,17 @@ public class AudioManager : MonoBehaviour
 
     void Start()
     {
+        bgmVolume = PlayerPrefs.GetFloat("BGMVolume", 0.5f);
+        sfxVolume = PlayerPrefs.GetFloat("SFXVolume", 0.7f);
+
+        bgmSource.volume = bgmVolume;
+        sfxSource.volume = sfxVolume;
+
+        int curBgm = PlayerPrefs.GetInt("curBGM",0);
+        PlayBGM((BGMClip)curBgm);
         StartCoroutine(ClearTemp());
+
+
         // sfxSources = new List<AudioSource>();
 
         // for(int i = 0 ; i < (int)SFXClip.MAX ; i++){
@@ -44,17 +57,18 @@ public class AudioManager : MonoBehaviour
 
     public void PlaySFX(SFXClip clip)
     {
-        if (sfxSources.isPlaying)
+        if (sfxSource.isPlaying)
         {
-            tempSources.Add(gameObject.AddComponent<AudioSource>());
-            tempSources[tempSources.Count - 1].clip = sfxClips[(int)clip];
-            tempSources[tempSources.Count - 1].Play();
-
+            AudioSource tempSource = gameObject.AddComponent<AudioSource>();
+            tempSource.volume = sfxVolume;
+            tempSource.clip = sfxClips[(int)clip];
+            tempSource.Play();
+            tempSources.Add(tempSource);
         }
         else
         {
-            sfxSources.clip = sfxClips[(int)clip];
-            sfxSources.Play();
+            sfxSource.clip = sfxClips[(int)clip];
+            sfxSource.Play();
         }
     }
 
@@ -80,4 +94,19 @@ public class AudioManager : MonoBehaviour
         bgmSource.clip = bgmClips[(int)clip];
         bgmSource.Play();
     }
+
+    public void SetBGMVolme(float value)
+    {
+        bgmVolume = value;
+        bgmSource.volume = value;
+        PlayerPrefs.SetFloat("BGMVolume", value);
+    }
+
+    public void SetSFXVolme(float value)
+    {
+        sfxVolume = value;
+        sfxSource.volume = value;
+        PlayerPrefs.SetFloat("SFXVolume", value);
+    }
+
 }

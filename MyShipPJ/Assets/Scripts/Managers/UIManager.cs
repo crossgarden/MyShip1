@@ -20,6 +20,8 @@ public class UIManager : MonoBehaviour
     public Character curCharacter;
     List<Character> characters;
     public Transform characterContainer;
+    public GameObject characterSpeechBubble;
+    public TextMeshProUGUI characterScriptTxt;
 
     /**  Top bar */
     [Header("top bar")]
@@ -30,6 +32,7 @@ public class UIManager : MonoBehaviour
     public Image energyFill;
     public Slider favorSlider;
     public TextMeshProUGUI characterLevelTxt;
+    public GameObject coinShopPanel, settingsPanel;
 
     /** 캐릭터 리스트 */
     [Header("Character list")]
@@ -92,6 +95,8 @@ public class UIManager : MonoBehaviour
         InitWallPaperList();
         InitWallpaper();
         InitGameList();
+        
+        StartCoroutine(CharacterSpeech());
 
         if (PlayerPrefs.GetInt("CurRoom", 0) == (int)RoomNum.PRIVATE)
         {
@@ -127,7 +132,6 @@ public class UIManager : MonoBehaviour
         popupPanel.SetActive(false);
     }
 
-
     /** 3. Slider fill 색깔 */
     public void SetSliderFillColor(Slider slider, Image fill)
     {
@@ -161,6 +165,26 @@ public class UIManager : MonoBehaviour
         // 캐릭터 리스트 팝업 닫기
         CharacterListPanel.SetActive(false);
     }
+
+
+
+
+    /** 1. 캐릭터 말풍선 생성 */
+    IEnumerator CharacterSpeech()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(20);
+            string[] scripts = curCharacter.script;
+            characterScriptTxt.text = scripts[UnityEngine.Random.Range(0, curCharacter.level)];
+            characterSpeechBubble.SetActive(true);
+
+            yield return new WaitForSeconds(7);
+            characterSpeechBubble.SetActive(false);
+        }
+    }
+
+
 
     /*************** [2-6] top bar 세팅 **********************/
     /** 2. 호감도 UI 업데이트 */
@@ -234,7 +258,11 @@ public class UIManager : MonoBehaviour
         }
         coinTxt.text = txt;
     }
+    
+    /** 10. coinShop 액션 */
+    public void BuyCoin(int value){
 
+    }
 
 
 
@@ -248,7 +276,7 @@ public class UIManager : MonoBehaviour
             GameObject characterCard = Instantiate(CharacterCardPrefab, transform.position, Quaternion.identity);
             CharacterCard cardScript = characterCard.GetComponent<CharacterCard>();
             characterCard.name = characters[i].name;
-            cardScript.SetUI(characters[i], i);
+            cardScript.SetUI(characters[i]);
 
             characterCard.transform.SetParent(characterListContent.transform, false);
             characterCard.SetActive(true);
@@ -285,7 +313,7 @@ public class UIManager : MonoBehaviour
         int index = PlayerPrefs.GetInt("CurCharacter", 0);
         Transform card = characterListContent.transform.GetChild(index);
         CharacterCard cardScript = card.GetComponent<CharacterCard>();
-        cardScript.SetUI(characters[index], index);
+        cardScript.SetUI(characters[index]);
     }
 
     /** 5. 현재 캐릭터의 spotlight만 갱신 */
@@ -296,6 +324,9 @@ public class UIManager : MonoBehaviour
         CharacterCard cardScript = card.GetComponent<CharacterCard>();
         cardScript.ChangeSpotlight();
     }
+
+
+
 
 
     /*********************** [1-3] 0. 대기실 **************************/
@@ -316,10 +347,16 @@ public class UIManager : MonoBehaviour
 
     /** 2. 게임 씬 로드 */
     /** GameItem에서 사용 */
-    public void SelectGame(Game game){
+    public void SelectGame(Game game)
+    {
         howToGamePanel.GetComponent<HowToGame>().SetUI(game);
         howToGamePanel.SetActive(true);
     }
+
+
+
+
+
 
     /*********************** [1-7] 1. 개인실 **************************/
     /** 1. 전등 버튼 액션 */
@@ -413,6 +450,9 @@ public class UIManager : MonoBehaviour
     {
         print("ClothesAction");
     }
+
+
+
 
 
 
@@ -512,5 +552,7 @@ public class UIManager : MonoBehaviour
         PlayerPrefs.SetInt("SelectedFood", food.index);
         refrigeratorPanel.SetActive(false);
     }
+
+
 
 }
