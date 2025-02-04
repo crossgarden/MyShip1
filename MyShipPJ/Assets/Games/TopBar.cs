@@ -32,6 +32,10 @@ public class TopBar : MonoBehaviour
         SetCoinUI();
     }
 
+    private void OnEnable() {
+        SetUI();
+    }
+
     // 호감도 UI
     void SetFavorUI()
     {

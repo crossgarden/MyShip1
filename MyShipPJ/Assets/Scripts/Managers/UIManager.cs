@@ -44,7 +44,7 @@ public class UIManager : MonoBehaviour
     /** 0. 대기실 */
     [Header("watting room")]
     public List<Game> games;
-    public GameObject gamePrefab;
+    public GameObject gameItemPrefab;
     public GameObject gamesPanel;
     public GameObject gameContent;
     public GameObject howToGamePanel;
@@ -82,6 +82,7 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
+        Screen.orientation = ScreenOrientation.Portrait;
         InitData();
 
         LoadCharacterList();
@@ -335,7 +336,7 @@ public class UIManager : MonoBehaviour
     {
         foreach (Game game in games)
         {
-            GameObject gameItem = Instantiate(gamePrefab, transform.position, quaternion.identity);
+            GameObject gameItem = Instantiate(gameItemPrefab, transform.position, quaternion.identity);
             GameItem gameItemScript = gameItem.GetComponent<GameItem>();
             gameItem.name = game.name;
             gameItemScript.SetUI(game);

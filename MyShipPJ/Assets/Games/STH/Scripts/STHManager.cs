@@ -75,6 +75,8 @@ public class STHManager : MonoBehaviour
     public TextMeshProUGUI overTxt, overScoreTxt, HighScoreTxt;
     bool pause = false;
 
+
+
     void Start()
     {
         GameManager.instance.returnFromGame = true;
@@ -151,6 +153,8 @@ public class STHManager : MonoBehaviour
 
     }
 
+
+    // 제한시간 감소 코루틴
     IEnumerator UpTimeLimit()
     {
         while (timeLimitIndex < timeLimit.Length)
@@ -162,6 +166,8 @@ public class STHManager : MonoBehaviour
             timeLimitIndex++;
         }
     }
+
+
 
     // 배경 색 리턴
     Color GetTargetColor(int score)
@@ -212,6 +218,8 @@ public class STHManager : MonoBehaviour
 
         HPSliderFill.color = new Color(red / 255, green / 255, 0);
     }
+
+
 
     // 처음 두 타일 초기화
     void InitTile()
@@ -278,201 +286,6 @@ public class STHManager : MonoBehaviour
         }
     }
 
-    public void Action(int isShift)
-    {
-        if (!start)
-        {
-            start = true;
-            Time.timeScale = 1;
-        }
-
-        playerAnim.SetTrigger("walking");
-
-        stayTime = 0;
-        HPSlider.value = HPSlider.maxValue;
-
-        AudioManager.instance.PlaySFX(AudioManager.SFXClip.CLICK);
-
-
-
-        if (isShift == 1)
-        {
-            playerDir *= -1;
-            Vector3 playerPos = player.transform.localScale;
-            playerPos.x = -playerPos.x;
-            player.transform.localScale = playerPos;
-        }
-
-        DownBGAndTile();
-
-        if (isShift == tiles[0])
-            Success();
-        else
-            Fail(true);
-
-
-        /** 테스트용 무조건 성공 코드
-        if (tiles[0] == 1)
-        {
-            playerDir *= -1;
-            Vector3 playerPos = player.transform.localScale;
-            playerPos.x = -playerPos.x;
-            player.transform.localScale = playerPos;
-        }
-
-        DownBGAndTile();
-        Success();
-*/
-    }
-
-    public void DownBGAndTile()
-    {
-        // 타일 아래로 내리기
-        Vector3 movement = Vector3.down * tileSize.y + new Vector3(-playerDir, 0, 0) * tileSize.x;
-        tilesContainer1.position += movement;
-        tilesContainer2.position += movement;
-
-        if (bottomContainer != null)
-            bottomContainer.transform.position += movement;
-
-        // 배경 내리기
-        bg1TargetPos = bg1.position + movement / 4;
-        bg2TargetPos = bg2.position + movement / 4;
-
-        if (!smoothBGRunning)
-            StartCoroutine(SmoothBG());
-    }
-
-    Vector3 bg1TargetPos, bg2TargetPos;
-    bool smoothBGRunning = false;
-
-    IEnumerator SmoothBG()
-    {
-        smoothBGRunning = true;
-        while (bg1.position != bg1TargetPos || bg2.position != bg2TargetPos)
-        {
-            yield return null;
-            bg2.position = Vector3.Lerp(bg2.position, bg2TargetPos, Time.deltaTime * 5);
-            bg1.position = Vector3.Lerp(bg1.position, bg1TargetPos, Time.deltaTime * 5);
-
-            if (bg1.position.y < y)
-            {
-                bg1.position = bg1TargetPos;
-                bg2.position = bg2TargetPos;
-                bg1.position += new Vector3(0, bgSize.y * 2 - 0.01f, 0);
-                break;
-            }
-
-            if (bg2.position.y < y)
-            {
-                bg1.position = bg1TargetPos;
-                bg2.position = bg2TargetPos;
-                bg2.position += new Vector3(0, bgSize.y * 2 - 0.01f, 0);
-                break;
-            }
-        }
-        smoothBGRunning = false;
-    }
-
-    /**   부드럽게 하는거 포기 ㅇㅇ
-        public void DownBGAndTile2()
-        {
-            // 타일 아래로 내리기
-            Vector3 movement = Vector3.down * tileSize.y + new Vector3(-playerDir, 0, 0) * tileSize.x;
-            float targetPosY = tilesContainer1.position.y + movement.y;
-            StartCoroutine(SmoothDownBGAndTile(movement, targetPosY));
-        }
-
-        IEnumerator SmoothDownBGAndTile(Vector3 movement, float targetPosY)
-        {
-            while (tilesContainer1.position.y > targetPosY)
-            {
-                yield return null;
-
-                Vector3 targetPos1 = tilesContainer1.position + movement;
-                Vector3 targetPos2 = tilesContainer2.position + movement;
-                Vector3 targetBottomPos = bottomContainer != null ? bottomContainer.transform.position + movement : Vector3.zero;
-
-                Vector3[] targetBgPositions = new Vector3[backgrounds.Count];
-                for (int i = 0; i < backgrounds.Count; i++)
-                {
-                    targetBgPositions[i] = backgrounds[i].position + movement / 4;
-                }
-
-                // 타일 컨테이너 이동
-                tilesContainer1.position = Vector3.Lerp(tilesContainer1.position, targetPos1, Time.deltaTime * 12);
-                tilesContainer2.position = Vector3.Lerp(tilesContainer2.position, targetPos2, Time.deltaTime * 12);
-
-                // 바닥 컨테이너 이동
-                if (bottomContainer != null)
-                {
-                    bottomContainer.transform.position = Vector3.Lerp(bottomContainer.transform.position, targetBottomPos, Time.deltaTime * 3);
-                }
-
-                // 배경 이동
-                for (int i = 0; i < backgrounds.Count; i++)
-                {
-                    backgrounds[i].position = Vector3.Lerp(backgrounds[i].position, targetBgPositions[i], Time.deltaTime * 3);
-                }
-
-
-            }
-        }
-*/
-    public void Success()
-    {
-        tiles.RemoveAt(0);
-
-        if (isCoin[0])
-        {
-            GetCoin(1);
-            coinTile[0].transform.GetChild(0).gameObject.SetActive(false);
-            coinTile.RemoveAt(0);
-        }
-
-        isCoin.RemoveAt(0);
-
-
-        int x = UnityEngine.Random.Range(0, 5);
-        if (x == 4 || maxStraight == 5)
-        {
-            tiles.Add(SHIFT);
-            maxStraight = 0;
-        }
-        else
-        {
-            tiles.Add(UP);
-            maxStraight++;
-        }
-
-        // 점수 올리기
-        score += 1;
-        scoreTxt.text = "점수 : " + score;
-
-        if (score % (tileCount / 2) == 0)
-        { // 30점 올릴때마다 타일 재생성
-            if (whichTiles == 2)
-            {
-                CreateTileContainer(tilesContainer1, tilesContainer2);
-                whichTiles = 1;
-            }
-            else
-            {
-                CreateTileContainer(tilesContainer2, tilesContainer1);
-                whichTiles = 2;
-            }
-        }
-    }
-
-    void GetCoin(int coinValue)
-    {
-        DataManager.instance.userData.coin += coinValue;
-        AudioManager.instance.PlaySFX(AudioManager.SFXClip.SUCCESS);
-        coin += coinValue;
-        coinTxt.text = coin.ToString();
-        overCoinTxt.text = "+ " + coin.ToString();
-    }
-
     // 타일 재생성 후 위로 올리기 
     void CreateTileContainer(Transform newContainer, Transform oldContainer)
     {
@@ -524,15 +337,177 @@ public class STHManager : MonoBehaviour
         }
     }
 
+    // 오를 때마다 배경이랑 타일 내리기 
+    public void DownBGAndTile()
+    {
+        // 타일 아래로 내리기
+        Vector3 movement = Vector3.down * tileSize.y + new Vector3(-playerDir, 0, 0) * tileSize.x;
+        tilesContainer1.position += movement;
+        tilesContainer2.position += movement;
+
+        if (bottomContainer != null)
+            bottomContainer.transform.position += movement;
+
+        // 배경 내리기
+        bg1TargetPos = bg1.position + movement / 4;
+        bg2TargetPos = bg2.position + movement / 4;
+
+        if (!smoothBGRunning)
+            StartCoroutine(SmoothBG());
+    }
+
+    // 배경 부드럽게 내리기
+    Vector3 bg1TargetPos, bg2TargetPos;
+    bool smoothBGRunning = false;
+
+    IEnumerator SmoothBG()
+    {
+        smoothBGRunning = true;
+        while (bg1.position != bg1TargetPos || bg2.position != bg2TargetPos)
+        {
+            yield return null;
+            bg2.position = Vector3.Lerp(bg2.position, bg2TargetPos, Time.deltaTime * 5);
+            bg1.position = Vector3.Lerp(bg1.position, bg1TargetPos, Time.deltaTime * 5);
+
+            if (bg1.position.y < y)
+            {
+                bg1.position = bg1TargetPos;
+                bg2.position = bg2TargetPos;
+                bg1.position += new Vector3(0, bgSize.y * 2 - 0.01f, 0);
+                break;
+            }
+
+            if (bg2.position.y < y)
+            {
+                bg1.position = bg1TargetPos;
+                bg2.position = bg2TargetPos;
+                bg2.position += new Vector3(0, bgSize.y * 2 - 0.01f, 0);
+                break;
+            }
+        }
+        smoothBGRunning = false;
+    }
+
+
+
+    // 클릭 액션(오르기 / 시프트)
+    public void Action(int isShift)
+    {
+        if (!start)
+        {
+            start = true;
+            Time.timeScale = 1;
+        }
+
+        playerAnim.SetTrigger("walking");
+
+        stayTime = 0;
+        HPSlider.value = HPSlider.maxValue;
+
+        AudioManager.instance.PlaySFX(AudioManager.SFXClip.CLICK);
+
+
+
+        if (isShift == 1)
+        {
+            playerDir *= -1;
+            Vector3 playerPos = player.transform.localScale;
+            playerPos.x = -playerPos.x;
+            player.transform.localScale = playerPos;
+        }
+
+        DownBGAndTile();
+
+        if (isShift == tiles[0])
+            Success();
+        else
+            Fail(true);
+
+
+        /** 테스트용 무조건 성공 코드
+        if (tiles[0] == 1)
+        {
+            playerDir *= -1;
+            Vector3 playerPos = player.transform.localScale;
+            playerPos.x = -playerPos.x;
+            player.transform.localScale = playerPos;
+        }
+
+        DownBGAndTile();
+        Success();
+*/
+    }
+
+    // 올바르게 눌렀을 때 
+    public void Success()
+    {
+        tiles.RemoveAt(0);
+
+        if (isCoin[0])
+        {
+            GetCoin(1);
+            coinTile[0].transform.GetChild(0).gameObject.SetActive(false);
+            coinTile.RemoveAt(0);
+        }
+
+        isCoin.RemoveAt(0);
+
+
+        int x = UnityEngine.Random.Range(0, 5);
+        if (x == 4 || maxStraight == 5)
+        {
+            tiles.Add(SHIFT);
+            maxStraight = 0;
+        }
+        else
+        {
+            tiles.Add(UP);
+            maxStraight++;
+        }
+
+        // 점수 올리기
+        score += 1;
+        scoreTxt.text = "점수 : " + score;
+
+        if (score % (tileCount / 2) == 0)
+        { // 30점 올릴때마다 타일 재생성
+            if (whichTiles == 2)
+            {
+                CreateTileContainer(tilesContainer1, tilesContainer2);
+                whichTiles = 1;
+            }
+            else
+            {
+                CreateTileContainer(tilesContainer2, tilesContainer1);
+                whichTiles = 2;
+            }
+        }
+    }
+
+
+
+
+    // 코인 먹었을 때
+    void GetCoin(int coinValue)
+    {
+        DataManager.instance.userData.coin += coinValue;
+        AudioManager.instance.PlaySFX(AudioManager.SFXClip.SUCCESS);
+        coin += coinValue;
+        coinTxt.text = coin.ToString();
+        overCoinTxt.text = "+ " + coin.ToString();
+    }
+
+
+
+
+    // 게임 오버 ( 게임오버 패널 세팅 등.. )
     public void Fail(bool isFail)
     {
         pause = true;
         Time.timeScale = 0;
         StopCoroutine("UpTimeLimit");
 
-        topBar.GetComponent<TopBar>().SetUI();
         topBar.SetActive(true);
-        gameTopBar.SetActive(false);
 
         if (score > game.high_score)
         {
@@ -554,6 +529,7 @@ public class STHManager : MonoBehaviour
         Time.timeScale = 0;
     }
 
+    // [1-3] 게임오버 패널 버튼 액션들
     public void ReStartAction()
     {
         Time.timeScale = 1;
@@ -563,12 +539,11 @@ public class STHManager : MonoBehaviour
     public void ReturnAction()
     {
         pause = false;
-        Time.timeScale = 1;
         StartCoroutine("UpTimeLimit");
         gameOverPanel.SetActive(false);
+        Time.timeScale = 1;
 
         topBar.SetActive(false);
-        gameTopBar.SetActive(true);
     }
 
     public void ExitAction()
@@ -576,4 +551,6 @@ public class STHManager : MonoBehaviour
         Time.timeScale = 1;
         SceneManager.LoadScene("MainScene");
     }
+
+
 }

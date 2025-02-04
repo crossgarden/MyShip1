@@ -17,7 +17,6 @@ public class FS_Character : MonoBehaviour
     {
         if (Input.GetMouseButton(0))
         {
-            print("마우스 입력" + rigid.totalForce);
             Up();
         }
 
@@ -34,5 +33,17 @@ public class FS_Character : MonoBehaviour
         float fallRotation = rigid.velocity.y * force;
         fallRotation = Mathf.Clamp(fallRotation, -60, 20);
         transform.rotation = Quaternion.Euler(0, 0, fallRotation);
+    }
+
+    private void OnTriggerEnter2D(Collider2D other) {
+        if(other.tag == "Obstacle"){
+            FSManager.instance.GameOver(isOver: true);
+        }
+
+        if(other.tag == "Coin"){
+            AudioManager.instance.PlaySFX(AudioManager.SFXClip.SUCCESS);
+            Destroy(other.gameObject);
+            FSManager.instance.GetCoin();
+        }
     }
 }
