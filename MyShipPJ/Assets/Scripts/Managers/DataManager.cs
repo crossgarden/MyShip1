@@ -12,9 +12,9 @@ using System;
 using Google;
 using UnityEngine.UI;
 using Firebase.Auth;
-using System.Threading.Tasks;
 using UnityEditor;
 using TMPro;
+using System.Threading.Tasks;
 
 public class DataManager : MonoBehaviour
 {
@@ -31,14 +31,12 @@ public class DataManager : MonoBehaviour
     DatabaseReference dbref;
     Firebase.FirebaseApp app;
 
-    public TextMeshProUGUI infoText;
-    string webClientId = "369182402609-laecu4int0pnrrj9u269dqvbmedr360b.apps.googleusercontent.com";
+    private string webClientId = "369182402609-nic6rvbt5vttsa83rmoeaujohhd76j3t.apps.googleusercontent.com";
     Firebase.Auth.FirebaseAuth auth;
     GoogleSignInConfiguration configuration;
 
     // json
     public string path;    // 읽기/쓰기가 가능한 로컬저장영역
-
 
     private void Awake()
     {
@@ -50,38 +48,44 @@ public class DataManager : MonoBehaviour
         }
         else
             Destroy(gameObject);
-
-
-        userData = new UserData();
-
-        path = Application.persistentDataPath + "\\";
-
-        configuration = new GoogleSignInConfiguration { WebClientId = webClientId, RequestEmail = true, RequestIdToken = true };
-        CheckFirebaseDependencies();
     }
 
     void Start()
     {
+        userData = new UserData();
+        path = Application.persistentDataPath + "/";
+
+        Debug.Log(path);
+        configuration = new GoogleSignInConfiguration { WebClientId = webClientId, RequestEmail = true, RequestIdToken = true };
+
+        CheckFirebaseDependencies();
+        Debug.Log(path);
         // FirebaseInit();
         loadData();
         CharacterSort();
+
     }
 
     void CheckFirebaseDependencies()
     {
+        Debug.Log(path);
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
            {
                if (task.IsCompleted)
                {
                    if (task.Result == DependencyStatus.Available)
+                   {
                        auth = FirebaseAuth.DefaultInstance;
+                       Debug.Log("Firebase 초기화 성공!");
+                   }
+
                    else
-                       AddToInformation("Could not resolve all Firebase dependencies: " + task.Result.ToString());
+                       Debug.LogError("Firebase dependency 문제 발생: " + "Could not resolve all Firebase dependencies: " + task.Result.ToString());
+
                }
                else
-               {
-                   AddToInformation("Dependency check was not completed. Error : " + task.Exception.Message);
-               }
+                   Debug.LogError("Dependency check was not completed. Error : " + "Firebase 초기화 실패: " + task.Exception?.Message);
+
            });
     }
 
@@ -90,23 +94,45 @@ public class DataManager : MonoBehaviour
 
     private void OnSignIn()
     {
-        GoogleSignIn.Configuration = configuration;
-        GoogleSignIn.Configuration.UseGameSignIn = false;
-        GoogleSignIn.Configuration.RequestIdToken = true;
-        AddToInformation("Calling SignIn");
+        GoogleSignIn.Configuration = new GoogleSignInConfiguration
+        {
+            WebClientId = webClientId,  // Firebase에서 제공하는 Web Client ID
+            RequestIdToken = true,
+            RequestEmail = true,    
+            UseGameSignIn = false
+        };
 
-        GoogleSignIn.DefaultInstance.SignIn().ContinueWith(OnAuthenticationFinished);
+        Debug.Log("Calling SignIn");
+
+        GoogleSignIn.DefaultInstance.SignIn().ContinueWith(task =>
+        {
+            if (task.IsFaulted)
+            {
+                Debug.Log("Sign-in Failed");
+                Debug.Log("내 웹클라 아이디 " + webClientId);
+                foreach (Exception e in task.Exception.InnerExceptions)
+                    Debug.Log("Exception: " + e.Message);
+
+            }
+            else if (task.IsCanceled)
+                Debug.Log("Sign-in Canceled");
+
+            else
+                Debug.Log("Sign-in Success: " + task.Result.DisplayName);
+
+        });
+        // GoogleSignIn.DefaultInstance.SignIn().ContinueWith(OnAuthenticationFinished);
     }
 
     private void OnSignOut()
     {
-        AddToInformation("Calling SignOut");
+        Debug.Log("Calling SignOut");
         GoogleSignIn.DefaultInstance.SignOut();
     }
 
     public void OnDisconnect()
     {
-        AddToInformation("Calling Disconnect");
+        Debug.Log("Calling Disconnect");
         GoogleSignIn.DefaultInstance.Disconnect();
     }
 
@@ -117,26 +143,26 @@ public class DataManager : MonoBehaviour
             using (IEnumerator<Exception> enumerator = task.Exception.InnerExceptions.GetEnumerator())
             {
                 if (enumerator.MoveNext())
-                {   
+                {
                     GoogleSignIn.SignInException error = (GoogleSignIn.SignInException)enumerator.Current;
-                    AddToInformation("Got Error: " + error.Status + " " + error.Message);
+                    Debug.Log("Got Error: " + error.Status + " " + error.Message);
                 }
                 else
                 {
-                    AddToInformation("Got Unexpected Exception?!?" + task.Exception);
+                    Debug.Log("Got Unexpected Exception?!?" + task.Exception);
                 }
             }
         }
         else if (task.IsCanceled)
         {
-            AddToInformation("Canceled");
+            Debug.Log("Canceled");
         }
         else
         {
-            AddToInformation("Welcome: " + task.Result.DisplayName + "!");
-            AddToInformation("Email = " + task.Result.Email);
-            AddToInformation("Google ID Token = " + task.Result.IdToken);
-            AddToInformation("Email = " + task.Result.Email);
+            Debug.Log("Welcome: " + task.Result.DisplayName + "!");
+            Debug.Log("Email = " + task.Result.Email);
+            Debug.Log("Google ID Token = " + task.Result.IdToken);
+            Debug.Log("Email = " + task.Result.Email);
             SignInWithGoogleOnFirebase(task.Result.IdToken);
         }
     }
@@ -151,11 +177,11 @@ public class DataManager : MonoBehaviour
             if (ex != null)
             {
                 if (ex.InnerExceptions[0] is FirebaseException inner && (inner.ErrorCode != 0))
-                    AddToInformation("\nError code = " + inner.ErrorCode + " Message = " + inner.Message);
+                    Debug.Log("\nError code = " + inner.ErrorCode + " Message = " + inner.Message);
             }
             else
             {
-                AddToInformation("Sign In Successful.");
+                Debug.Log("Sign In Successful.");
             }
         });
     }
@@ -165,7 +191,7 @@ public class DataManager : MonoBehaviour
         GoogleSignIn.Configuration = configuration;
         GoogleSignIn.Configuration.UseGameSignIn = false;
         GoogleSignIn.Configuration.RequestIdToken = true;
-        AddToInformation("Calling SignIn Silently");
+        Debug.Log("Calling SignIn Silently");
 
         GoogleSignIn.DefaultInstance.SignInSilently().ContinueWith(OnAuthenticationFinished);
     }
@@ -176,12 +202,10 @@ public class DataManager : MonoBehaviour
         GoogleSignIn.Configuration.UseGameSignIn = true;
         GoogleSignIn.Configuration.RequestIdToken = false;
 
-        AddToInformation("Calling Games SignIn");
+        Debug.Log("Calling Games SignIn");
 
         GoogleSignIn.DefaultInstance.SignIn().ContinueWith(OnAuthenticationFinished);
     }
-
-    private void AddToInformation(string str) { infoText.text += "\n" + str; }
 
 
 
@@ -213,84 +237,81 @@ public class DataManager : MonoBehaviour
     }
 
     // 파이어베이스 초기화 
-    public void FirebaseInit()
-    {
-        Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
-        {
-            var dependencyStatus = task.Result;
-            if (dependencyStatus == Firebase.DependencyStatus.Available)
-            {
-                // Create and hold a reference to your FirebaseApp,
-                // where app is a Firebase.FirebaseApp property of your application class.
-                app = Firebase.FirebaseApp.DefaultInstance;
-                auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
+    // public void FirebaseInit()
+    // {
+    //     Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
+    //     {
+    //         var dependencyStatus = task.Result;
+    //         if (dependencyStatus == Firebase.DependencyStatus.Available)
+    //         {
+    //             // Create and hold a reference to your FirebaseApp,
+    //             // where app is a Firebase.FirebaseApp property of your application class.
+    //             app = Firebase.FirebaseApp.DefaultInstance;
+    //             auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
 
-                // app 내가 임의로 선언함..
+    //             // app 내가 임의로 선언함..
 
-                // Set a flag here to indicate whether Firebase is ready to use by your app.
-            }
-            else
-            {
-                UnityEngine.Debug.LogError(System.String.Format(
-                  "Could not resolve all Firebase dependencies: {0}", dependencyStatus));
-                // Firebase Unity SDK is not safe to use here.
-            }
-        });
-
-
-    }
+    //             // Set a flag here to indicate whether Firebase is ready to use by your app.
+    //         }
+    //         else
+    //         {
+    //             UnityEngine.Debug.LogError(System.String.Format(
+    //               "Could not resolve all Firebase dependencies: {0}", dependencyStatus));
+    //             // Firebase Unity SDK is not safe to use here.
+    //         }
+    //     });
 
 
-    public void GetGoogleToken(string googleIdToken, string googleAccessToken)
-    {
-        Firebase.Auth.Credential credential =
-            Firebase.Auth.GoogleAuthProvider.GetCredential(googleIdToken, googleAccessToken);
-
-        auth.SignInAndRetrieveDataWithCredentialAsync(credential).ContinueWith(task =>
-        {
-            if (task.IsCanceled)
-            {
-                Debug.LogError("SignInAndRetrieveDataWithCredentialAsync was canceled.");
-                return;
-            }
-            if (task.IsFaulted)
-            {
-                Debug.LogError("SignInAndRetrieveDataWithCredentialAsync encountered an error: " + task.Exception);
-                return;
-            }
-
-            Firebase.Auth.AuthResult result = task.Result;
-            Debug.LogFormat("User signed in successfully: {0} ({1})",
-                result.User.DisplayName, result.User.UserId);
-        });
-    }
-
-    public void SignInAccount()
-    {
-        Firebase.Auth.FirebaseUser user = auth.CurrentUser;
-        if (user != null)
-        {
-            string name = user.DisplayName;
-            string email = user.Email;
-            System.Uri photo_url = user.PhotoUrl;
-            // The user's Id, unique to the Firebase project.
-            // Do NOT use this value to authenticate with your backend server, if you
-            // have one; use User.TokenAsync() instead.
-            string uid = user.UserId;
-        }
-    }
-
-    public void SignOut()
-    {
-        auth.SignOut();
-    }
+    // }
 
 
-    public void InitializeUserData()
-    {
+    // public void GetGoogleToken(string googleIdToken, string googleAccessToken)
+    // {
+    //     Firebase.Auth.Credential credential =
+    //         Firebase.Auth.GoogleAuthProvider.GetCredential(googleIdToken, googleAccessToken);
 
-    }
+    //     auth.SignInAndRetrieveDataWithCredentialAsync(credential).ContinueWith(task =>
+    //     {
+    //         if (task.IsCanceled)
+    //         {
+    //             Debug.LogError("SignInAndRetrieveDataWithCredentialAsync was canceled.");
+    //             return;
+    //         }
+    //         if (task.IsFaulted)
+    //         {
+    //             Debug.LogError("SignInAndRetrieveDataWithCredentialAsync encountered an error: " + task.Exception);
+    //             return;
+    //         }
 
+    //         Firebase.Auth.AuthResult result = task.Result;
+    //         Debug.LogFormat("User signed in successfully: {0} ({1})",
+    //             result.User.DisplayName, result.User.UserId);
+    //     });
+    // }
 
+    // public void SignInAccount()
+    // {
+    //     Firebase.Auth.FirebaseUser user = auth.CurrentUser;
+    //     if (user != null)
+    //     {
+    //         string name = user.DisplayName;
+    //         string email = user.Email;
+    //         System.Uri photo_url = user.PhotoUrl;
+    //         // The user's Id, unique to the Firebase project.
+    //         // Do NOT use this value to authenticate with your backend server, if you
+    //         // have one; use User.TokenAsync() instead.
+    //         string uid = user.UserId;
+    //     }
+    // }
+
+    // public void SignOut()
+    // {
+    //     auth.SignOut();
+    // }
+
+    // public void InitializeUserData()
+    // {
+
+    // }
 
 }

@@ -204,3 +204,14 @@ Flappy Seaman 만들기 O
  - 파이어베이스 해결(빌드 해결^^)
  - 졸업기준 되나
  - 외국인?
+
+
+
+
+
+
+----------
+
+빌드 해결 > Plugins/Android 폴더 삭제로 해결함... 근데 그 전에 뭘 많이 했어서 뭐가 유효타인진 모르겠음
+
+C:\Users\lsy_0\AppData\LocalLow\DefaultCompany\MyShipPJ

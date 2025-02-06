@@ -1,4 +1,4 @@
-// <copyright file="GoogleSignIn.cs" company="Google Inc.">
+﻿// <copyright file="GoogleSignIn.cs" company="Google Inc.">
 // Copyright (C) 2017 Google Inc. All Rights Reserved.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,8 +14,7 @@
 //  limitations under the License.
 // </copyright>
 
-namespace Google
-{
+namespace Google {
   using System;
   using System.Runtime.Serialization;
   using System.Threading.Tasks;
@@ -48,15 +47,12 @@ namespace Google
   /// </code>
   /// </para>
   /// </remarks>
-  
-  public class GoogleSignIn
-  {
+  public class GoogleSignIn {
 
 #if !UNITY_ANDROID && !UNITY_IOS
-    static GoogleSignIn()
-    {
-      Debug.LogError("This platform is not supported");
-    }
+  static GoogleSignIn() {
+    Debug.LogError("This platform is not supported");
+  }
 #endif
 
     private static GoogleSignIn theInstance = null;
@@ -67,25 +63,19 @@ namespace Google
     ///<remarks> The configuration should be set before calling the sign-in
     /// methods.  Once the configuration is set it cannot be changed.
     ///</remarks>
-    public static GoogleSignInConfiguration Configuration
-    {
-      set
-      {
+    public static GoogleSignInConfiguration Configuration {
+      set {
         // Can set the configuration until the singleton is created.
-        if (theInstance == null || theConfiguration == value || theConfiguration == null)
-        {
+        if (theInstance == null || theConfiguration == value || theConfiguration == null) {
           theConfiguration = value;
-        }
-        else
-        {
+        } else {
           throw new SignInException(GoogleSignInStatusCode.DeveloperError,
               "DefaultInstance already created. " +
               " Cannot change configuration after creation.");
         }
       }
 
-      get
-      {
+      get {
         return theConfiguration;
       }
     }
@@ -94,12 +84,9 @@ namespace Google
     /// Singleton instance of this class.
     /// </summary>
     /// <value>The instance.</value>
-    public static GoogleSignIn DefaultInstance
-    {
-      get
-      {
-        if (theInstance == null)
-        {
+    public static GoogleSignIn DefaultInstance {
+      get {
+        if (theInstance == null) {
 #if UNITY_ANDROID || UNITY_IOS
           theInstance = new GoogleSignIn(new GoogleSignInImpl(Configuration));
 #else
@@ -113,14 +100,12 @@ namespace Google
       }
     }
 
-    internal GoogleSignIn(GoogleSignInImpl impl)
-    {
+    internal GoogleSignIn(GoogleSignInImpl impl) {
       this.impl = impl;
     }
 
-    public void EnableDebugLogging(bool flag)
-    {
-      impl.EnableDebugLogging(flag);
+    public void EnableDebugLogging(bool flag) {
+            impl.EnableDebugLogging(flag);
     }
 
     /// <summary>Starts the authentication process.</summary>
@@ -129,8 +114,7 @@ namespace Google
     /// popups and consent prompts based on the state of authentication and
     /// the requested elements.
     /// </remarks>
-    public Task<GoogleSignInUser> SignIn()
-    {
+    public Task<GoogleSignInUser> SignIn() {
       var tcs = new TaskCompletionSource<GoogleSignInUser>();
       SignInHelperObject.Instance.StartCoroutine(
         impl.SignIn().WaitForResult(tcs));
@@ -143,8 +127,7 @@ namespace Google
     /// displaying any UI.  If this cannot be done, the developer should call
     /// SignIn().
     /// </remarks>
-    public Task<GoogleSignInUser> SignInSilently()
-    {
+    public Task<GoogleSignInUser> SignInSilently() {
       var tcs = new TaskCompletionSource<GoogleSignInUser>();
       SignInHelperObject.Instance.StartCoroutine(
           impl.SignInSilently().WaitForResult(tcs));
@@ -157,8 +140,7 @@ namespace Google
     /// <remarks>Future sign-in attempts will require the user to select the
     /// account to use when signing in.
     /// </remarks>
-    public void SignOut()
-    {
+    public void SignOut() {
       theConfiguration = null;
       impl.SignOut();
     }
@@ -172,8 +154,7 @@ namespace Google
     /// sign-in attempts will require the user to re-consent to the requested
     /// scopes.
     /// </remarks>
-    public void Disconnect()
-    {
+    public void Disconnect() {
       impl.Disconnect();
     }
 
@@ -182,43 +163,36 @@ namespace Google
     /// errors during the sign-in process.
     /// </summary>
     [Serializable]
-    public class SignInException : Exception
-    {
-      internal SignInException(GoogleSignInStatusCode status)
-      {
+    public class SignInException : Exception {
+      internal SignInException(GoogleSignInStatusCode status) {
         Status = status;
       }
 
       public SignInException(GoogleSignInStatusCode status, string message) :
-          base(message)
-      {
+          base(message) {
         Status = status;
       }
 
       public SignInException(GoogleSignInStatusCode status, string message,
-          Exception innerException) : base(message, innerException)
-      {
+          Exception innerException) : base(message, innerException) {
         Status = status;
       }
 
       protected SignInException(GoogleSignInStatusCode status,
                                 SerializationInfo info,
                                 StreamingContext context) :
-          base(info, context)
-      {
+          base(info, context) {
         Status = status;
       }
 
-      public GoogleSignInStatusCode Status
-      {
+      public GoogleSignInStatusCode Status {
         get;
         internal set;
       }
     }
   }
 
-  internal interface ISignInImpl
-  {
+  internal interface ISignInImpl {
     Future<GoogleSignInUser> SignIn();
     Future<GoogleSignInUser> SignInSilently();
     void EnableDebugLogging(bool flag);

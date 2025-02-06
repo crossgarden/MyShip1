@@ -18,9 +18,8 @@ namespace Google.Impl {
   using System;
   using System.Collections.Generic;
   using System.Runtime.InteropServices;
-    using UnityEngine;
 
-    internal class GoogleSignInImpl : BaseObject, ISignInImpl {
+  internal class GoogleSignInImpl : BaseObject, ISignInImpl {
 
 #if UNITY_ANDROID
     private const string DllName = "native-googlesignin";
