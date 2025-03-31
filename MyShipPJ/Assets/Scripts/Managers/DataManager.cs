@@ -109,9 +109,8 @@ public class DataManager : MonoBehaviour
             if (task.IsFaulted)
             {
                 Debug.Log("Sign-in Failed");
-                Debug.Log("내 웹클라 아이디 " + webClientId);
                 foreach (Exception e in task.Exception.InnerExceptions)
-                    Debug.Log("Exception: " + e.Message);
+                    Debug.LogError("Exception: " + e.Message + " StackTrace: " + e.StackTrace);
 
             }
             else if (task.IsCanceled)
