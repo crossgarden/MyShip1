@@ -24,7 +24,6 @@ public class Settings : MonoBehaviour
     }
 
     public void SignInAction(){
-        DataManager.instance.SignInWithGoogle();
     }
 
     public void SignOutAction(){
