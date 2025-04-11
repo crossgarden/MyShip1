@@ -55,9 +55,16 @@ public class FSManager : MonoBehaviour
         pillarSpawnsPos[1] = pillarSpawns[1].position;
         pillarSize = pillarPrefabs[0].GetComponent<SpriteRenderer>().bounds.size;
 
+        Time.timeScale = 0;
+
         StartCoroutine("CreatePillarRoutine");
         StartCoroutine("SpeedUpRoutine");
         StartCoroutine("ScoreUpRoutine");
+    }
+
+    public void GameStart(GameObject startBtn){
+        Time.timeScale = 1;
+        startBtn.SetActive(false);
     }
 
     // 기둥 & 코인 생성 코루틴

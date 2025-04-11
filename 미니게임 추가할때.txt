@@ -1,16 +1,15 @@
 미니게임 추가할때
 
 > userData.json에 게임 정보 추가
-> Resources/Sprites/Items/Games/ 에 game.name이랑 같은 이름의 썸네일 이미지 추가
-> Scence 이름은 G_game.name으로
+> Resources/Sprites/Items/Games/ 에 게임이름이랑 같은 이름의 썸네일 이미지 추가
+> Scence 이름은 G_게임이름으로
 
 > 메인 카메라에 latter box 컴포넌트 추가
-> 캔버스는 월드 스페이스로
+> 캔버스는 월드 스페이스로 
 
 
 가져갈거 :
 	- 매니저 - GameManaer, AudioManager, DataManager 
-		> 나중에 프리팹으로 만들거임
 	- 캔버스 - TopBar, CoinShopPanel(미완), SettingsPanel(미완), GameOverPanel
 		> GameOverPanel은 틀만 있어서 text 세팅 같은건 직접 해야 함.
 			 FSManager나 STHManager에서 '게임 오버' 검색해서 참고하심 됨(안하셔도 됨)
