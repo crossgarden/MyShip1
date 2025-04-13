@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/G_FlappySeaman.unity
     guid: 36a97371886ed5f458dc58c91946bdfa
+  - enabled: 1
+    path: Assets/Scenes/G_Meteor.unity
+    guid: 133a79c6f9c045247bd53bef05fb2bb6
   m_configObjects: {}
