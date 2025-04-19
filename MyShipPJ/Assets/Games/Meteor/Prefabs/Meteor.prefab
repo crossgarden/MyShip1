@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7523423211543393343}
   - component: {fileID: 3933348891124036406}
   m_Layer: 9
-  m_Name: fall_Meteor
+  m_Name: Meteor
   m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

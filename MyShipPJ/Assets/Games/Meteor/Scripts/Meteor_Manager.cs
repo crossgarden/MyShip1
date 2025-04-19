@@ -7,7 +7,6 @@ using UnityEngine.SceneManagement;
 
 public class Meteor_Manager : MonoBehaviour
 {
-
     public static Meteor_Manager instance;
 
     private void Awake()
@@ -25,7 +24,10 @@ public class Meteor_Manager : MonoBehaviour
     public Transform playerContainer;
     // public Animator playerAnim;
 
+    public GameObject meteorPrefab;
     public GameObject coinPrefab;
+    public Vector3[] spawnPositions = new Vector3[20]; // 20개의 생성 위치
+    private List<int> availablePositions = new List<int>(); // 사용 가능한 위치 인덱스
 
     [Header("GameTopBar & GameOverPanel")]
     public GameObject gameTopBar, topBar, gameOverPanel, reStartBtn, returnBtn;
@@ -42,8 +44,15 @@ public class Meteor_Manager : MonoBehaviour
         player.transform.SetParent(playerContainer, false);
         // playerAnim = player.GetComponent<Animator>();
 
+        // 20개의 생성 위치 초기화 (예시 위치, 실제 게임에 맞게 조정 필요)
+        for (int i = 0; i < 20; i++)
+        {
+            spawnPositions[i] = new Vector3(Random.Range(-10f, 10f), 6f, 0); // (X범위, Y범위, Z범위)
+        }
+
         Time.timeScale = 0;
 
+        StartCoroutine("CreateMeteorAndCoinRoutine");
         StartCoroutine("SpeedUpRoutine");
         StartCoroutine("ScoreUpRoutine");
     }
@@ -54,6 +63,52 @@ public class Meteor_Manager : MonoBehaviour
         startBtn.SetActive(false);
     }
 
+    // 운석 & 코인 생성 코루틴
+    IEnumerator CreateMeteorAndCoinRoutine()
+    {
+        while (true)
+        {
+            // 사용 가능한 위치 리스트 초기화
+            availablePositions.Clear();
+            for (int i = 0; i < spawnPositions.Length; i++)
+            {
+                availablePositions.Add(i);
+            }
+
+            // speed에 따라 운석과 코인 개수 결정
+            int meteorCount = speed > 18 ? 13 : (speed > 12 ? 9 : 5);
+            int coinCount = speed > 18 ? 3 : (speed > 12 ? 2 : 1);
+
+            // 운석 생성
+            for (int i = 0; i < meteorCount && availablePositions.Count > 0; i++)
+            {
+                int randomIndex = Random.Range(0, availablePositions.Count);
+                int posIndex = availablePositions[randomIndex];
+                availablePositions.RemoveAt(randomIndex);
+
+                Instantiate(meteorPrefab, spawnPositions[posIndex], Quaternion.identity);
+            }
+
+            // 코인 생성
+            for (int i = 0; i < coinCount && availablePositions.Count > 0; i++)
+            {
+                int randomIndex = Random.Range(0, availablePositions.Count);
+                int posIndex = availablePositions[randomIndex];
+                availablePositions.RemoveAt(randomIndex);
+
+                GameObject coin = Instantiate(coinPrefab, spawnPositions[posIndex], Quaternion.identity);
+
+                // speed에 따라 코인 크기 조정
+                if (speed > 18)
+                    coin.transform.localScale = coin.transform.localScale * 1.5f;
+                else if (speed > 12)
+                    coin.transform.localScale = coin.transform.localScale * 1.3f;
+            }
+
+            yield return new WaitForSeconds(1f); // 생성 간격 조정 가능
+        }
+    }
+
     // 스피드 증가 코루틴
     IEnumerator SpeedUpRoutine()
     {
@@ -62,7 +117,6 @@ public class Meteor_Manager : MonoBehaviour
             yield return new WaitForSeconds(speedUpInterval);
             speed += 0.5f;
         }
-
     }
 
     // 점수 증가 코루틴
@@ -83,7 +137,7 @@ public class Meteor_Manager : MonoBehaviour
 
         if (speed > 18)
             coinValue = 5;
-        if (speed > 12)
+        else if (speed > 12)
             coinValue = 3;
         else
             coinValue = 2;
@@ -99,6 +153,7 @@ public class Meteor_Manager : MonoBehaviour
         DataManager.instance.saveData();
         Time.timeScale = 0;
 
+        StopCoroutine("CreateMeteorAndCoinRoutine");
         StopCoroutine("SpeedUpRoutine");
         StopCoroutine("ScoreUpRoutine");
 
@@ -115,7 +170,6 @@ public class Meteor_Manager : MonoBehaviour
 
         overHighScoreTxt.text = "최고 : " + game.high_score;
         gameOverPanel.SetActive(true);
-
     }
 
     // [1-3] 게임 오버 패널 버튼 액션들
@@ -127,6 +181,7 @@ public class Meteor_Manager : MonoBehaviour
 
     public void ReturnAction()
     {
+        StartCoroutine("CreateMeteorAndCoinRoutine");
         StartCoroutine("SpeedUpRoutine");
         StartCoroutine("ScoreUpRoutine");
 
@@ -141,5 +196,4 @@ public class Meteor_Manager : MonoBehaviour
         Time.timeScale = 1;
         SceneManager.LoadScene("MainScene");
     }
-
 }
