@@ -50,7 +50,7 @@ public class Meteor_Manager : MonoBehaviour
             spawnPositions[i] = new Vector3(Random.Range(-10f, 10f), 6f, 0); // (X범위, Y범위, Z범위)
         }
 
-        Time.timeScale = 0;
+        Time.timeScale = 1;
 
         StartCoroutine("CreateMeteorAndCoinRoutine");
         StartCoroutine("SpeedUpRoutine");
