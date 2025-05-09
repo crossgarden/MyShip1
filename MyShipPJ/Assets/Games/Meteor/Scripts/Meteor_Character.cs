@@ -10,7 +10,7 @@ public class Meteor_Character : MonoBehaviour
 
     private float minX, maxX;
     private float characterHalfWidth;
-    private int characterDirection = 1; // -1: 坷弗率, +1: 哭率
+    private int characterDirection = -1; // -1: 坷弗率, +1: 哭率
 
     void Start()
     {
