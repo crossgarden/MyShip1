@@ -8,6 +8,8 @@ TagManager:
   - RefrigeratorScrollRect
   - Coin
   - Obstacle
+  - Food
+  - Body
   layers:
   - Default
   - TransparentFX

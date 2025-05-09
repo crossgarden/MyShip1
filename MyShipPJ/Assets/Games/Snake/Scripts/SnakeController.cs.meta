@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 22259c94359bd15429792c82b98441bf
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - snakePartPrefab: {fileID: 807956712449578925, guid: ad18d1f8256613c409c9eec88ebf0358, type: 3}
+  - playerContainer: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
