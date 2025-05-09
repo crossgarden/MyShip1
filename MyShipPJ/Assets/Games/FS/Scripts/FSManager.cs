@@ -64,7 +64,7 @@ public class FSManager : MonoBehaviour
         StartCoroutine("ScoreUpRoutine");
     }
 
-    public void GameStart(){
+    public void GameStart(GameObject startBtn){
         Time.timeScale = 1;
         Destroy(startBtn);
     }
@@ -185,10 +185,14 @@ public class FSManager : MonoBehaviour
     // 게임 오버
     public void GameOver(bool isOver)
     {
-        Destroy(startBtn);
 
+        Destroy(startBtn);
         DataManager.instance.saveData();
         Time.timeScale = 0;
+
+        StopCoroutine("CreatePillarRoutine");
+        StopCoroutine("SpeedUpRoutine");
+        StopCoroutine("ScoreUpRoutine");
 
         overTxt.text = isOver ? "게임오버" : "일시정지";
 
@@ -215,6 +219,9 @@ public class FSManager : MonoBehaviour
 
     public void ReturnAction()
     {
+        StartCoroutine("CreatePillarRoutine");
+        StartCoroutine("SpeedUpRoutine");
+        StartCoroutine("ScoreUpRoutine");
 
         gameOverPanel.SetActive(false);
         Time.timeScale = 1;
