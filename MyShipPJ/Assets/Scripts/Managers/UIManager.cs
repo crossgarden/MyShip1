@@ -82,6 +82,7 @@ public class UIManager : MonoBehaviour
 
     [Header("others")]
     public GameObject TriumphsPanel;
+    public GameObject Quests;
 
     private void Start()
     {
