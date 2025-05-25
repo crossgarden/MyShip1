@@ -22,6 +22,7 @@ public class RunManager : MonoBehaviour
     public int speedUpInterval = 5;
 
     public Transform playerContainer;
+    Animator anim; // Animator 추가
 
     public GameObject[] rockPrefabs;
     public Transform[] rockSpawns; // 0, 1, 2 positions
@@ -44,6 +45,7 @@ public class RunManager : MonoBehaviour
 
         GameObject playerPrefab = Resources.Load<GameObject>("Prefabs/Characters/" + GameManager.instance.curCharacter.name);
         GameObject player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
+        anim = player.GetComponent<Animator>(); // Animator 초기화
         player.transform.SetParent(playerContainer, false);
 
         // 스폰 위치 초기화
@@ -56,6 +58,12 @@ public class RunManager : MonoBehaviour
         StartCoroutine(CreateRockRoutine());
         StartCoroutine(SpeedUpRoutine());
         StartCoroutine(ScoreUpRoutine());
+    }
+
+    private void Update()
+    {
+        // 시작 시 walking 애니메이션 트리거
+        anim.SetTrigger("walking");
     }
 
     // 바위 생성 코루틴
@@ -108,7 +116,7 @@ public class RunManager : MonoBehaviour
         if (Random.Range(0, 100) < 50)
         {
             // 상단 바위(0번 위치)의 위쪽에 코인 생성
-            Vector3 coinPos = rockSpawnsPos[0] + new Vector3(0, rockPrefabs[0].GetComponent<SpriteRenderer>().bounds.size.y / 2, 0);
+            Vector3 coinPos = rockSpawnsPos[0] + new Vector3(0, 1 + rockPrefabs[0].GetComponent<SpriteRenderer>().bounds.size.y / 2, 0);
 
             GameObject coin = Instantiate(coinPrefab, coinPos, Quaternion.identity);
 
