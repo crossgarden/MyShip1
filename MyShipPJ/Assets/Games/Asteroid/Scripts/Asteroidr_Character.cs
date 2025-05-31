@@ -118,15 +118,23 @@ public class Asteroid_Character : MonoBehaviour
     {
         if (joystickPrefab != null)
         {
-            currentJoystick = Instantiate(joystickPrefab, screenPosition, Quaternion.identity);
-            currentJoystick.transform.SetParent(GameObject.Find("Canvas").transform, false);
+            // 캔버스 참조 가져오기
+            RectTransform canvasRect = GameObject.Find("Canvas").GetComponent<RectTransform>();
 
-            // 조이스틱 컴포넌트 가져오기
-            joystickBackground = currentJoystick.GetComponent<Image>();
-            joystickHandle = currentJoystick.transform.GetChild(0).GetComponent<Image>();
+            // 스크린 좌표를 캔버스 로컬 좌표로 변환
+            Vector2 localPointer;
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPosition, Camera.main, out localPointer))
+            {
+                currentJoystick = Instantiate(joystickPrefab, canvasRect); // 부모를 먼저 설정하여 스케일 문제 방지
+                currentJoystick.GetComponent<RectTransform>().anchoredPosition = localPointer; // 캔버스 로컬 좌표 설정
 
-            // 초기 위치 설정
-            joystickHandle.rectTransform.anchoredPosition = Vector2.zero;
+                // 조이스틱 컴포넌트 가져오기
+                joystickBackground = currentJoystick.GetComponent<Image>();
+                joystickHandle = currentJoystick.transform.GetChild(0).GetComponent<Image>();
+
+                // 초기 위치 설정
+                joystickHandle.rectTransform.anchoredPosition = Vector2.zero;
+            }
         }
     }
 
