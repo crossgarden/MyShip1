@@ -32,4 +32,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/G_Asteroid.unity
     guid: 7bcf970ee5c63654a84214b6dcdd90b9
+  - enabled: 1
+    path: Assets/Scenes/G_CardMemory.unity
+    guid: 08a01491575412e478b2d20bb1ac4702
+  - enabled: 1
+    path: Assets/Scenes/G_SpaceshipShoot.unity
+    guid: 1d60053574221ee44ba712898da6618e
   m_configObjects: {}
