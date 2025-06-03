@@ -83,6 +83,8 @@ public class UIManager : MonoBehaviour
     [Header("others")]
     public GameObject TriumphsPanel;
     public GameObject Quests;
+    public GameObject potionPanel;
+
 
     private void Start()
     {
@@ -111,6 +113,7 @@ public class UIManager : MonoBehaviour
 
         gamesPanel.SetActive(GameManager.instance.returnFromGame);
         GameManager.instance.returnFromGame = false;
+
     }
 
     public void InitData()
@@ -558,6 +561,11 @@ public class UIManager : MonoBehaviour
         refrigeratorPanel.SetActive(false);
     }
 
+    public void potionAction()
+    {
+        AudioManager.instance.PlaySFX(AudioManager.SFXClip.CLICK);
+        potionPanel.SetActive(true);
+    }
 
 
 }
