@@ -164,12 +164,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 509438337024323875}
+  m_Father: {fileID: 166738651932410242}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -109.5, y: 0.000017643}
-  m_SizeDelta: {x: 55.3361, y: 55.3361}
+  m_AnchoredPosition: {x: -179.58002, y: 0}
+  m_SizeDelta: {x: 80, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7451399747922866584
 CanvasRenderer:
@@ -238,14 +238,13 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 3518148921783476988}
+  m_Children: []
   m_Father: {fileID: 166738651932410242}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 11.799927, y: 0.00009918213}
-  m_SizeDelta: {x: 93.5551, y: 65.7637}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 13, y: 0.0000076293945}
+  m_SizeDelta: {x: -69.71762, y: -29.6484}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6459924710407470364
 CanvasRenderer:
@@ -275,7 +274,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 30
+  m_text: 300
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b135911baf38c50418f7faaa9a8d6e9d, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: bcbc334609515474b9e7e147e6c36f1a, type: 2}
@@ -375,13 +374,14 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 3518148921783476988}
   - {fileID: 509438337024323875}
   m_Father: {fileID: 1268719102370228097}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 378, y: 77}
-  m_SizeDelta: {x: -802.8491, y: -206.22}
+  m_AnchoredPosition: {x: 357.1, y: 77}
+  m_SizeDelta: {x: -761.05, y: -206.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4599288270090945384
 CanvasRenderer:
@@ -1337,6 +1337,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   food:
+    index: 0
     name: 
     kr_name: 
     cost: 0
