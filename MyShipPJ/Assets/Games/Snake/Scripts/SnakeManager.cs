@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
-using static UnityEditor.Timeline.TimelinePlaybackControls;
+//using static UnityEditor.Timeline.TimelinePlaybackControls; 빌드 오류 발생으로 주석처리
 
 public class SnakeManager : MonoBehaviour
 {

@@ -1,17 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-using Firebase;
-using Firebase.Database;
-using Firebase.Extensions;
+//using Firebase;
+//using Firebase.Database;
+//using Firebase.Extensions;
 
 using GameData;
 using System.IO;
 using System.Linq;
 using System;
-using Google;
-using UnityEngine.UI;
-using Firebase.Auth;
+//using Google;
+//using UnityEngine.UI;
+//using Firebase.Auth;
 using UnityEditor;
 using TMPro;
 using System.Threading.Tasks;
@@ -28,14 +28,14 @@ public class DataManager : MonoBehaviour
     public List<Character> characterSotred;
 
     // firebase
-    DatabaseReference dbref;
-    Firebase.FirebaseApp app;
+    //DatabaseReference dbref;
+    //Firebase.FirebaseApp app;
 
-    private string webClientId = "369182402609-laecu4int0pnrrj9u269dqvbmedr360b.apps.googleusercontent.com";
+    //private string webClientId = "369182402609-laecu4int0pnrrj9u269dqvbmedr360b.apps.googleusercontent.com";
 
-    public Firebase.Auth.FirebaseAuth auth;
-    public FirebaseUser user;
-    GoogleSignInConfiguration configuration;
+    //public Firebase.Auth.FirebaseAuth auth;
+    //public FirebaseUser user;
+    //GoogleSignInConfiguration configuration;
 
     // json
     public string path;    // 읽기/쓰기가 가능한 로컬저장영역
@@ -51,8 +51,8 @@ public class DataManager : MonoBehaviour
         else
             Destroy(gameObject);
 
-        configuration = new GoogleSignInConfiguration { WebClientId = webClientId, RequestEmail = true, RequestIdToken = true };
-        CheckFirebaseDependencies();
+        //configuration = new GoogleSignInConfiguration { WebClientId = webClientId, RequestEmail = true, RequestIdToken = true };
+        //CheckFirebaseDependencies();
     }
 
     void Start()
@@ -67,6 +67,8 @@ public class DataManager : MonoBehaviour
 
     }
 
+
+    /** 
     void CheckFirebaseDependencies()
     {
         Debug.Log(path);
@@ -217,11 +219,26 @@ public class DataManager : MonoBehaviour
         GoogleSignIn.DefaultInstance.SignIn().ContinueWith(OnAuthenticationFinished);
     }
 
+     */
+
+
     // 걍 json
     public void loadData()
     {
-        // userData 로드 
-        string userJson = File.ReadAllText(path + "userData.json");
+
+        string fullPath = path + "userData.json";
+
+        // StreamingAssets에 저장된 초기화용 JSON 파일 경로
+        string defaultJsonPath = Application.streamingAssetsPath + "/defaultUserData.json";
+
+        // userData.json 파일이 없으면 초기화 JSON 복사
+        if (!File.Exists(fullPath))
+        {
+            File.Copy(defaultJsonPath, fullPath);
+        }
+
+        // userData 로드
+        string userJson = File.ReadAllText(fullPath);
         userData = JsonUtility.FromJson<UserData>(userJson);
 
         // systemData 로드
