@@ -1,0 +1,333 @@
+﻿{
+  "ship_level": 1,
+  "coin": 3557,
+  "foods": [
+    {
+      "index": 0,
+      "name": "hotdog",
+      "kr_name": "핫도그",
+      "cost": 3,
+      "fullness": 3,
+      "favor": 5,
+      "descript": "싸구려 소시지가 들어간 핫도그. 이런게 당길 때가 있다.",
+      "count": 7
+    },
+    {
+      "index": 1,
+      "name": "pasta",
+      "kr_name": "파스타",
+      "cost": 5,
+      "fullness": 15,
+      "favor": 7,
+      "descript": "시판 소스로 만든 원팬 파스타. 라면만큼 쉽지만 더 건강하다.",
+      "count": 12
+    },
+    {
+      "index": 2,
+      "name": "gangyebab",
+      "kr_name": "간장계란밥",
+      "cost": 1000,
+      "fullness": 20,
+      "favor": 4,
+      "descript": "따끈한 밥에 반숙 계란과 간장과 참기름. 변치 않는 스테디셀러.",
+      "count": 1
+    },
+    {
+      "index": 3,
+      "name": "salad",
+      "kr_name": "샐러드",
+      "cost": 10,
+      "fullness": 15,
+      "favor": 4,
+      "descript": "고기만 먹어선 안된다 가끔은 풀도 먹어주자.",
+      "count": 13
+    },
+    {
+      "index": 4,
+      "name": "chickenandrice",
+      "kr_name": "치킨덮밥",
+      "cost": 1500,
+      "fullness": 30,
+      "favor": 7,
+      "descript": "따끈한 밥에 닭다리 2개가 올라가 있는 배부른 밥",
+      "count": 0
+    },
+    {
+      "index": 5,
+      "name": "hamburger",
+      "kr_name": "햄버거",
+      "cost": 200,
+      "fullness": 13,
+      "favor": 4,
+      "descript": "어느 지점이 생각나는 간단한 치즈버거이다.",
+      "count": 8
+    },
+    {
+      "index": 6,
+      "name": "kimbap",
+      "kr_name": "김밥",
+      "cost": 100,
+      "fullness": 12,
+      "favor": 4,
+      "descript": "밥과 반찬이 고루 말려있는 기본김밥이다.",
+      "count": 18
+    },
+    {
+      "index": 7,
+      "name": "pizza",
+      "kr_name": "피자",
+      "cost": 1200,
+      "fullness": 24,
+      "favor": 5,
+      "descript": "페퍼로니가 들어있는 쭉 늘어난 치즈피자이다",
+      "count": 12
+    }
+  ],
+  "characters": [
+    {
+      "id": 0,
+      "name": "Jay",
+      "kr_name": "제이",
+      "cost": 0,
+      "level": 7,
+      "favor": 41,
+      "fullness": 0,
+      "energy": 100,
+      "locked": 0,
+      "unlockDate": "2025-01-30",
+      "howToGet": "우주선 탑승 시 획득 가능.",
+      "introduction": "늘 무표정한 우주비행사. 어릴 적 선장이 데려와 키웠다고 한다.",
+      "script": [
+        "옷? 이 수트랑 잠옷 두개 뿐인데.",
+        "이곳의 생활은 풍족하지는 않지만 그렇다고 부족하지도 않을 거야. 이곳이 좋아졌으면 좋겠네.",
+        "난 그냥 뒀으면 우주 쓰레기들과 함께 버려졌을 거야. 선장님껜 갚을 수 없는 빚을 진 거지.",
+        "우주의 아름다움은, 우주가 아름답다고 느낄 수 있는 생명이 있어 존재하는 거랬어.",
+        "진실을 마주하는 건 두렵지만, 모든 성장에는 고통이 수반하는 법이야.",
+        "\"그대가 사랑일진데, 나 역시 그대를 사랑한다.\" 어쩐지 떠오르는 구절이야.",
+        "이 우주의 광막함이, 때로는 안정을 주기도 해. 나만이 혼자가 아니라는 느낌을 주거든.",
+        "우주를 상상하면, 종막엔 결국 네가 떠올라."
+      ]
+    },
+    {
+      "id": 1,
+      "name": "Herpa",
+      "kr_name": "헤르파",
+      "cost": 20,
+      "level": 5,
+      "favor": 179,
+      "fullness": 54,
+      "energy": 100,
+      "locked": 0,
+      "unlockDate": "2025-02-01",
+      "howToGet": "",
+      "introduction": "뛰어난 실력의 정비사. 원래 제국군의 정비사였다.",
+      "script": [
+        "몇몇 부품은 너보다 오래 됐을 수도 있어.",
+        "사실 세상에 존재하는 모든 물질이 138억년 전에 만들어진거지.",
+        "무중력에 둥둥 떠있을때 죽어있던 삶의 감각들이 스패너를 돌리면 살아나.",
+        "펜치 스패너 니퍼 렌치... 우주도 사실 이런 것들로 만들어졌을 지 몰라.",
+        "레몬에이드보다 완벽한 발명품이 있을까?",
+        "재밌지 않아? 100년도 채 못사는 우리가 빛이 몇백년동안 가는 거리를 이렇데 단숨에 가다니.",
+        "나는 우주선에서 태어났어. 그러니까 나의 고향은 광속으로 달리는 열차에서 스쳐지나간 찰나의 지점이야.",
+        "별이, 행성이, 폭발의 잔해가, 우리를 이루고 있다는 것만큼 아름다운 일이 있을까?"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Captain",
+      "kr_name": "선장",
+      "cost": 0,
+      "level": 6,
+      "favor": 56,
+      "fullness": 68,
+      "energy": 100,
+      "locked": 0,
+      "unlockDate": "2025-06-12",
+      "howToGet": "선박 레벨 3레벨 달성 시 획득.",
+      "introduction": "OO의 선장. 주로 실험 가운을 입고 다닌다. 무슨 생각을 하는 지 도통 알 수 없다.",
+      "script": [
+        "달을 향해 쏘렴. 빗나가도 별이 될테니.",
+        "0.00000028%가 일어나는 건 기적이지. 그리고 이건 네가 지금의 너로 존재할 확률이야.",
+        "별의 탄생과 죽음은 무한히 일어나지만 그걸 살아서 볼 확률은 제로에 가깝지.",
+        "제이가 나를 따르는 건, 새끼 오리가 처음 본 존재를 어미로 따르는 것과 같지.",
+        "의무실에 정신과는 없어. 우주선에선 정신병 없는 놈이 진짜 아픈 놈이거든.",
+        "단 한명이라도 진실을 알고 있다면, 온 우주가 그 진실을 아는 격이지.",
+        "이 거대한 우주의 단 하나의 존재 가치는 요람이야.",
+        "개인적인 것 보다 더 우주적인 것은 없지. 너의 개인적인 것을 알려주겠니?"
+      ]
+    }
+  ],
+  "games": [
+    {
+      "id": 0,
+      "name": "StairwayToHeaven",
+      "kr_name": "천국의계단",
+      "descript": " 우주선에서는 운동 부족, 근손실이 오기 쉽죠. 천국의 계단으로 체력을 키워보세요! ",
+      "high_score": 786
+    },
+    {
+      "id": 1,
+      "name": "FlappySeaman",
+      "kr_name": "협곡통과",
+      "descript": " 중력이 엄청나게 강한 행성에 긴급 착륙합니다. 이런! 심지어 협곡을 통과해야 합니다. ",
+      "high_score": 126
+    },
+    {
+      "id": 2,
+      "name": "Meteor",
+      "kr_name": "운석충돌",
+      "descript": "공룡 멸종의 원인으론 운석 충돌이 정설로 받아들여지고 있죠. 당신도 멸종되지 않게 조심하세요.",
+      "high_score": 109
+    },
+    {
+      "id": 3,
+      "name": "ToTheMoon",
+      "kr_name": "달을 향해",
+      "descript": "지구의 탈출 속도는 11.19km/s 입니다. 새로 개발된 점프수트의 위력을 한 번 볼까요?",
+      "high_score": 100
+    },
+    {
+      "id": 4,
+      "name": "SnakeGame",
+      "kr_name": "고물줍기",
+      "descript": "우주선에서는 늘 자원이 부족하죠. 쓸만한 고물을 찾아볼까요? ",
+      "high_score": 200
+    },
+    {
+      "id": 5,
+      "name": "ColorGame",
+      "kr_name": "폭탄해체",
+      "descript": "어떤 선을 자를까요? 당신이 좋아하는 색을 선택할까요, 아니면 남겨둘까요?",
+      "high_score": 37
+    },
+    {
+      "id": 6,
+      "name": "Run",
+      "kr_name": "달려!",
+      "descript": "우주선이 당신만 두고 떠나려 합니다. 이봐, 당직! 인원체크 제대로 안해?!",
+      "high_score": 100
+    },
+    {
+      "id": 7,
+      "name": "Asteroid",
+      "kr_name": "소행성지대",
+      "descript": "사실, 이정도로 많은 소행성이 모여있다면 하나의 행성이 되었을 겁니다.",
+      "high_score": 100
+    },
+    {
+      "id": 6,
+      "name": "SpaceshipShoot",
+      "kr_name": "갈테아우주전",
+      "descript": " 무식한 인해전술은 제국군의 주특기죠. 아까운 목숨입니다. ",
+      "high_score": 100
+    },
+    {
+      "id": 7,
+      "name": "CardMemory",
+      "kr_name": "슈뢰딩거카드",
+      "descript": " 뒤집기 전까지 이 카드는 빨간색일 수도, 파란색일 수도 있습니다. ",
+      "high_score": 100
+    }
+  ],
+  "wallpapers": [
+    {
+      "id": 0,
+      "name": "basic",
+      "kr_name": "basic",
+      "descript": "",
+      "howToGet": "bbbbbbbbbbbbbbasic0",
+      "locked": 0,
+      "getDate": "2025-01-26",
+      "cost": 0,
+      "roomNum": 0
+    },
+    {
+      "id": 1,
+      "name": "cool",
+      "kr_name": "쿨",
+      "descript": "우주를 볼 수 있는 밝은 우주선의 내부 공간",
+      "howToGet": "bbbbbbbbbbbbbbasic0",
+      "locked": 0,
+      "getDate": "2025-03-16",
+      "cost": 0,
+      "roomNum": 0
+    },
+    {
+      "id": 2,
+      "name": "basic",
+      "kr_name": "basic",
+      "descript": "",
+      "howToGet": "bbbbbbbbbbbbbbasic0",
+      "locked": 0,
+      "getDate": "2025-01-26",
+      "cost": 0,
+      "roomNum": 1
+    },
+    {
+      "id": 3,
+      "name": "modern",
+      "kr_name": "모던",
+      "descript": "무채색의 심플한 액자와 선반으로 꾸민 모던한 개인실.",
+      "howToGet": "100코인으로 구매 가능.",
+      "locked": 0,
+      "getDate": "2025-01-26",
+      "cost": 100,
+      "roomNum": 1
+    },
+    {
+      "id": 4,
+      "name": "test2",
+      "kr_name": "test2",
+      "descript": "",
+      "howToGet": "1test222222222.",
+      "locked": 0,
+      "getDate": "2025-01-26",
+      "cost": 150,
+      "roomNum": 1
+    },
+    {
+      "id": 5,
+      "name": "basic",
+      "kr_name": "basic",
+      "descript": "",
+      "howToGet": "bbbbbbbbbbbbbbasic0",
+      "locked": 0,
+      "getDate": "2025-01-26",
+      "cost": 0,
+      "roomNum": 2
+    },
+    {
+      "id": 6,
+      "name": "simpleCute",
+      "kr_name": "심플큐트",
+      "descript": "파스텔 톤의 귀여운 느낌을 내보려 했으나 색감이 떨어져 망한 식당",
+      "howToGet": "100코인으로 구매 가능.",
+      "locked": 0,
+      "getDate": "2025-01-27",
+      "cost": 100,
+      "roomNum": 2
+    },
+    {
+      "id": 7,
+      "name": "test2",
+      "kr_name": "test2",
+      "descript": "",
+      "howToGet": "1test222222222.",
+      "locked": 1,
+      "getDate": "",
+      "cost": 0,
+      "roomNum": 2
+    },
+    {
+      "id": 8,
+      "name": "mood",
+      "kr_name": "mood",
+      "descript": "",
+      "howToGet": "1test222222222.",
+      "locked": 0,
+      "getDate": "2025-07-31",
+      "cost": 0,
+      "roomNum": 0
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using GameData;
 using TMPro;
@@ -25,7 +25,7 @@ public class Asteroid_Manager : MonoBehaviour
 
     public GameObject asteroidsPrefab;
     public GameObject coinPrefab;
-    public Camera mainCamera; // È­¸é °æ°è °è»êÀ» À§ÇÑ Ä«¸Ş¶ó ÂüÁ¶
+    public Camera mainCamera; // í™”ë©´ ê²½ê³„ ê³„ì‚°ì„ ìœ„í•œ ì¹´ë©”ë¼ ì°¸ì¡°
 
     [Header("GameTopBar & GameOverPanel")]
     public GameObject gameTopBar, topBar, gameOverPanel, reStartBtn, returnBtn;
@@ -37,12 +37,12 @@ public class Asteroid_Manager : MonoBehaviour
         GameManager.instance.returnFromGame = true;
         game = DataManager.instance.userData.games[PlayerPrefs.GetInt("CurGame")];
 
-        // ÇÃ·¹ÀÌ¾î »ı¼º
+        // í”Œë ˆì´ì–´ ìƒì„±
         GameObject playerPrefab = Resources.Load<GameObject>("Prefabs/Characters/" + GameManager.instance.curCharacter.name);
         GameObject player = Instantiate(playerPrefab, new Vector3(0, 0, 0), Unity.Mathematics.quaternion.identity);
         player.transform.SetParent(playerContainer, false);
 
-        // ¸ŞÀÎ Ä«¸Ş¶ó ÂüÁ¶
+        // ë©”ì¸ ì¹´ë©”ë¼ ì°¸ì¡°
         mainCamera = Camera.main;
 
         Time.timeScale = 1;
@@ -52,46 +52,46 @@ public class Asteroid_Manager : MonoBehaviour
         StartCoroutine("ScoreUpRoutine");
     }
 
-    // È­¸é °æ°è ¹ÛÀÇ ·£´ı À§Ä¡ »ı¼º (4¸é Áß ÇÏ³ª)
+    // í™”ë©´ ê²½ê³„ ë°–ì˜ ëœë¤ ìœ„ì¹˜ ìƒì„± (4ë©´ ì¤‘ í•˜ë‚˜)
     public Vector3 GetRandomSpawnPosition()
     {
         float screenWidth = mainCamera.orthographicSize * mainCamera.aspect;
         float screenHeight = mainCamera.orthographicSize;
 
-        // 0: »ó, 1: ÇÏ, 2: ÁÂ, 3: ¿ì
+        // 0: ìƒ, 1: í•˜, 2: ì¢Œ, 3: ìš°
         int side = Random.Range(0, 4);
 
         switch (side)
         {
-            case 0: // »ó´Ü
+            case 0: // ìƒë‹¨
                 return new Vector3(Random.Range(-screenWidth, screenWidth), screenHeight + 1, 0);
-            case 1: // ÇÏ´Ü
+            case 1: // í•˜ë‹¨
                 return new Vector3(Random.Range(-screenWidth, screenWidth), -screenHeight - 1, 0);
-            case 2: // ÁÂÃø
+            case 2: // ì¢Œì¸¡
                 return new Vector3(-screenWidth - 1, Random.Range(-screenHeight, screenHeight), 0);
-            case 3: // ¿ìÃø
+            case 3: // ìš°ì¸¡
                 return new Vector3(screenWidth + 1, Random.Range(-screenHeight, screenHeight), 0);
             default:
                 return Vector3.zero;
         }
     }
 
-    // ¼ÒÇà¼º & ÄÚÀÎ »ı¼º ·çÆ¾
+    // ì†Œí–‰ì„± & ì½”ì¸ ìƒì„± ë£¨í‹´
     IEnumerator CreateAsteroidsAndCoinRoutine()
     {
         while (true)
         {
-            // speed¿¡ µû¶ó ¼ÒÇà¼º°ú ÄÚÀÎ °³¼ö °áÁ¤
+            // speedì— ë”°ë¼ ì†Œí–‰ì„±ê³¼ ì½”ì¸ ê°œìˆ˜ ê²°ì •
             int meteorCount = speed > 18 ? 13 : (speed > 12 ? 9 : 5);
             int coinCount = speed > 18 ? 3 : (speed > 12 ? 2 : 1);
 
-            // ¼ÒÇà¼º »ı¼º
+            // ì†Œí–‰ì„± ìƒì„±
             for (int i = 0; i < meteorCount; i++)
             {
                 Vector3 spawnPos = GetRandomSpawnPosition();
                 GameObject asteroid = Instantiate(asteroidsPrefab, spawnPos, Quaternion.identity);
 
-                // ¼ÒÇà¼ºÀÇ ÀÌµ¿ ¹æÇâ ¼³Á¤ (»ı¼º À§Ä¡ÀÇ ¹İ´ë ¹æÇâ)
+                // ì†Œí–‰ì„±ì˜ ì´ë™ ë°©í–¥ ì„¤ì • (ìƒì„± ìœ„ì¹˜ì˜ ë°˜ëŒ€ ë°©í–¥)
                 Asteroid_Obstacle obstacle = asteroid.GetComponent<Asteroid_Obstacle>();
                 if (obstacle != null)
                 {
@@ -99,20 +99,20 @@ public class Asteroid_Manager : MonoBehaviour
                 }
             }
 
-            // ÄÚÀÎ »ı¼º
+            // ì½”ì¸ ìƒì„±
             for (int i = 0; i < coinCount; i++)
             {
                 Vector3 spawnPos = GetRandomSpawnPosition();
                 GameObject coinObj = Instantiate(coinPrefab, spawnPos, Quaternion.identity);
 
-                // ÄÚÀÎÀÇ ÀÌµ¿ ¹æÇâ ¼³Á¤ (»ı¼º À§Ä¡ÀÇ ¹İ´ë ¹æÇâ)
+                // ì½”ì¸ì˜ ì´ë™ ë°©í–¥ ì„¤ì • (ìƒì„± ìœ„ì¹˜ì˜ ë°˜ëŒ€ ë°©í–¥)
                 Asteroid_Obstacle coin = coinObj.GetComponent<Asteroid_Obstacle>();
                 if (coin != null)
                 {
                     coin.moveDirection = (Vector3.zero - spawnPos).normalized;
                 }
 
-                // speed¿¡ µû¶ó ÄÚÀÎ Å©±â Á¶Á¤
+                // speedì— ë”°ë¼ ì½”ì¸ í¬ê¸° ì¡°ì •
                 if (speed > 18)
                     coinObj.transform.localScale = coinObj.transform.localScale * 1.5f;
                 else if (speed > 12)
@@ -123,7 +123,7 @@ public class Asteroid_Manager : MonoBehaviour
         }
     }
 
-    // ½ºÇÇµå Áõ°¡ ÄÚ·çÆ¾
+    // ìŠ¤í”¼ë“œ ì¦ê°€ ì½”ë£¨í‹´
     IEnumerator SpeedUpRoutine()
     {
         while (speed < 22f)
@@ -133,18 +133,18 @@ public class Asteroid_Manager : MonoBehaviour
         }
     }
 
-    // Á¡¼ö Áõ°¡ ÄÚ·çÆ¾
+    // ì ìˆ˜ ì¦ê°€ ì½”ë£¨í‹´
     IEnumerator ScoreUpRoutine()
     {
         while (true)
         {
             yield return new WaitForSeconds(1);
             score += speed / 4;
-            scoreTxt.text = "Á¡¼ö: " + (int)score;
+            scoreTxt.text = "ì ìˆ˜: " + (int)score;
         }
     }
 
-    // ÄÚÀÎ Áõ°¡
+    // ì½”ì¸ ì¦ê°€
     public void GetCoin()
     {
         int coinValue;
@@ -161,32 +161,39 @@ public class Asteroid_Manager : MonoBehaviour
         coinTxt.text = coin.ToString();
     }
 
-    // °ÔÀÓ ¿À¹ö
+    // ê²Œì„ ì˜¤ë²„
     public void GameOver(bool isOver)
     {
         DataManager.instance.saveData();
         Time.timeScale = 0;
 
+        // ì¡°ì´ìŠ¤í‹± ê°•ì œ ì œê±°
+        Asteroid_Character playerCharacter = FindObjectOfType<Asteroid_Character>();
+        if (playerCharacter != null)
+        {
+            playerCharacter.ForceDestroyJoystick();
+        }
+
         StopCoroutine("CreateAsteroidsAndCoinRoutine");
         StopCoroutine("SpeedUpRoutine");
         StopCoroutine("ScoreUpRoutine");
 
-        overTxt.text = isOver ? "°ÔÀÓ¿À¹ö" : "ÀÏ½ÃÁ¤Áö";
+        overTxt.text = isOver ? "ê²Œì„ì˜¤ë²„" : "ì¼ì‹œì •ì§€";
 
         topBar.SetActive(true);
 
         returnBtn.SetActive(!isOver);
         reStartBtn.SetActive(isOver);
         overCoinTxt.text = "+ " + coin;
-        overScoreTxt.text = "Á¡¼ö : " + (int)score;
+        overScoreTxt.text = "ì ìˆ˜ : " + (int)score;
         if (score > game.high_score)
             game.high_score = (int)score;
 
-        overHighScoreTxt.text = "ÃÖ°í : " + game.high_score;
+        overHighScoreTxt.text = "ìµœê³  : " + game.high_score;
         gameOverPanel.SetActive(true);
     }
 
-    // [1-3] °ÔÀÓ ¿À¹ö ÆĞ³Î ¹öÆ° ¾×¼Çµé
+    // [1-3] ê²Œì„ ì˜¤ë²„ íŒ¨ë„ ë²„íŠ¼ ì•¡ì…˜ë“¤
     public void ReStartAction()
     {
         Time.timeScale = 1;
@@ -195,6 +202,13 @@ public class Asteroid_Manager : MonoBehaviour
 
     public void ReturnAction()
     {
+        // ì¡°ì´ìŠ¤í‹± ìƒíƒœ ì •ë¦¬ (í˜¹ì‹œ ë‚¨ì•„ìˆì„ ìˆ˜ ìˆëŠ” ì¡°ì´ìŠ¤í‹± ì œê±°)
+        Asteroid_Character playerCharacter = FindObjectOfType<Asteroid_Character>();
+        if (playerCharacter != null)
+        {
+            playerCharacter.ForceDestroyJoystick();
+        }
+
         StartCoroutine("CreateAsteroidsAndCoinRoutine");
         StartCoroutine("SpeedUpRoutine");
         StartCoroutine("ScoreUpRoutine");
