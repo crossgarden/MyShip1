@@ -13,12 +13,27 @@
 [Ll]ogs/
 [Uu]ser[Ss]ettings/
 
-# 파이어베이스 패키지 같은데 아닐수도 있음... 용량 때문에 안올라가서 일단 제외
+# Firebase 관련 (용량 문제로 제외)
 Firebase/
 ExternalDependencyManager/
 Editor Default Resources/
+
+# Plugins 폴더 - 대부분 제외하되 중요한 것들만 포함
 Plugins/
-StreamingAssets/
+
+# Android 빌드 설정 파일들은 포함 (gradle 관련)
+!Plugins/Android/
+!Plugins/Android/**
+
+# 다른 중요한 플러그인이 있다면 개별적으로 포함
+# !Plugins/ImportantPlugin/
+
+# StreamingAssets - 게임 데이터가 있으므로 포함해야 함
+# StreamingAssets/  ← 이 줄을 주석 처리했습니다
+# 만약 용량이 큰 파일들만 제외하고 싶다면:
+# StreamingAssets/*.mp4
+# StreamingAssets/*.wav
+# 하지만 defaultUserData.json은 반드시 포함되어야 합니다!
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data

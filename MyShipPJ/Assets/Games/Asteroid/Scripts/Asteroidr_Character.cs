@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -7,32 +7,32 @@ using UnityEngine.UI;
 public class Asteroid_Character : MonoBehaviour
 {
     Rigidbody2D rigid;
-    [SerializeField] float moveSpeed = 5f; // Ä³¸¯ÅÍ ÀÌµ¿ ¼Óµµ
+    [SerializeField] float moveSpeed = 5f; // ìºë¦­í„° ì´ë™ ì†ë„
 
-    private float minX, maxX, minY, maxY; // È­¸é °æ°è ÁÂÇ¥
-    private float characterHalfWidth, characterHalfHeight; // Ä³¸¯ÅÍ Å©±âÀÇ ¹İ
-    private int characterDirection = -1; // Ä³¸¯ÅÍ ¹æÇâ (-1: ¿À¸¥ÂÊ, 1: ¿ŞÂÊ)
+    private float minX, maxX, minY, maxY; // í™”ë©´ ê²½ê³„ ì¢Œí‘œ
+    private float characterHalfWidth, characterHalfHeight; // ìºë¦­í„° í¬ê¸°ì˜ ë°˜
+    private int characterDirection = -1; // ìºë¦­í„° ë°©í–¥ (-1: ì˜¤ë¥¸ìª½, 1: ì™¼ìª½)
 
-    // Á¶ÀÌ½ºÆ½ °ü·Ã º¯¼ö
-    [SerializeField] private GameObject joystickPrefab; // Á¶ÀÌ½ºÆ½ ÇÁ¸®ÆÕ
-    private GameObject currentJoystick; // ÇöÀç Á¶ÀÌ½ºÆ½ °´Ã¼
-    private Image joystickBackground; // Á¶ÀÌ½ºÆ½ ¹è°æ ÀÌ¹ÌÁö
-    private Image joystickHandle; // Á¶ÀÌ½ºÆ½ ÇÚµé ÀÌ¹ÌÁö
-    private Vector2 joystickTouchStartPosition; // Á¶ÀÌ½ºÆ½ ÅÍÄ¡ ½ÃÀÛ À§Ä¡
-    private bool isJoystickActive = false; // Á¶ÀÌ½ºÆ½ È°¼ºÈ­ »óÅÂ
-    private const float joystickRadius = 100f; // Á¶ÀÌ½ºÆ½ ¹İ°æ
-    private const float handleMoveRadius = 50f; // ÇÚµé ÀÌµ¿ ¹İ°æ
+    // ì¡°ì´ìŠ¤í‹± ê´€ë ¨ ë³€ìˆ˜
+    [SerializeField] private GameObject joystickPrefab; // ì¡°ì´ìŠ¤í‹± í”„ë¦¬íŒ¹
+    private GameObject currentJoystick; // í˜„ì¬ ì¡°ì´ìŠ¤í‹± ê°ì²´
+    private Image joystickBackground; // ì¡°ì´ìŠ¤í‹± ë°°ê²½ ì´ë¯¸ì§€
+    private Image joystickHandle; // ì¡°ì´ìŠ¤í‹± í•¸ë“¤ ì´ë¯¸ì§€
+    private Vector2 joystickTouchStartPosition; // ì¡°ì´ìŠ¤í‹± í„°ì¹˜ ì‹œì‘ ìœ„ì¹˜
+    private bool isJoystickActive = false; // ì¡°ì´ìŠ¤í‹± í™œì„±í™” ìƒíƒœ
+    private const float joystickRadius = 100f; // ì¡°ì´ìŠ¤í‹± ë°˜ê²½
+    private const float handleMoveRadius = 50f; // í•¸ë“¤ ì´ë™ ë°˜ê²½
 
     void Start()
     {
         rigid = GetComponent<Rigidbody2D>();
-        CalculateScreenBounds(); // È­¸é °æ°è °è»ê
+        CalculateScreenBounds(); // í™”ë©´ ê²½ê³„ ê³„ì‚°
     }
 
     void Update()
     {
-        HandleJoystickInput(); // Á¶ÀÌ½ºÆ½ ÀÔ·Â Ã³¸®
-        ClampPosition(); // È­¸é °æ°è ³»·Î À§Ä¡ Á¦ÇÑ
+        HandleJoystickInput(); // ì¡°ì´ìŠ¤í‹± ì…ë ¥ ì²˜ë¦¬
+        ClampPosition(); // í™”ë©´ ê²½ê³„ ë‚´ë¡œ ìœ„ì¹˜ ì œí•œ
     }
 
     void ClampPosition()
@@ -45,7 +45,7 @@ public class Asteroid_Character : MonoBehaviour
 
     void CalculateScreenBounds()
     {
-        // Ä³¸¯ÅÍ Äİ¶óÀÌ´õ Å©±â °è»ê
+        // ìºë¦­í„° ì½œë¼ì´ë” í¬ê¸° ê³„ì‚°
         Collider2D collider = GetComponent<Collider2D>();
         if (collider != null)
         {
@@ -58,11 +58,11 @@ public class Asteroid_Character : MonoBehaviour
             characterHalfHeight = 0.5f;
         }
 
-        // Ä«¸Ş¶ó ºäÆ÷Æ® °è»ê
+        // ì¹´ë©”ë¼ ë·°í¬íŠ¸ ê³„ì‚°
         float cameraHalfWidth = Camera.main.orthographicSize * Camera.main.aspect;
         float cameraHalfHeight = Camera.main.orthographicSize;
 
-        // È­¸é °æ°è °è»ê (Ä³¸¯ÅÍ°¡ È­¸é ¹ÛÀ¸·Î ³ª°¡Áö ¾Êµµ·Ï)
+        // í™”ë©´ ê²½ê³„ ê³„ì‚° (ìºë¦­í„°ê°€ í™”ë©´ ë°–ìœ¼ë¡œ ë‚˜ê°€ì§€ ì•Šë„ë¡)
         minX = Camera.main.transform.position.x - cameraHalfWidth + characterHalfWidth;
         maxX = Camera.main.transform.position.x + cameraHalfWidth - characterHalfWidth;
         minY = Camera.main.transform.position.y - cameraHalfHeight + characterHalfHeight;
@@ -71,68 +71,145 @@ public class Asteroid_Character : MonoBehaviour
 
     void HandleJoystickInput()
     {
-        // ¸¶¿ì½º Å¬¸¯ ½ÃÀÛ (Á¶ÀÌ½ºÆ½ »ı¼º)
-        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+        // ê²Œì„ì´ ì¼ì‹œì •ì§€ ìƒíƒœë©´ ì¡°ì´ìŠ¤í‹± ì…ë ¥ ë¬´ì‹œ
+        if (Time.timeScale == 0)
+            return;
+
+        // í„°ì¹˜ ì…ë ¥ ì²˜ë¦¬ (ëª¨ë°”ì¼)
+        if (Input.touchCount > 0)
         {
-            CreateJoystick(Input.mousePosition);
-            isJoystickActive = true;
-            joystickTouchStartPosition = Input.mousePosition;
-        }
-        // ¸¶¿ì½º µå·¡±× (Á¶ÀÌ½ºÆ½ Á¶ÀÛ)
-        else if (Input.GetMouseButton(0) && isJoystickActive)
-        {
-            Vector2 currentTouchPosition = Input.mousePosition;
-            Vector2 direction = currentTouchPosition - joystickTouchStartPosition;
-            float distance = direction.magnitude;
+            Touch touch = Input.GetTouch(0);
 
-            // Á¶ÀÌ½ºÆ½ ÇÚµé ÀÌµ¿
-            Vector2 handlePosition = direction.normalized * Mathf.Min(distance, handleMoveRadius);
-            joystickHandle.rectTransform.anchoredPosition = handlePosition;
-
-            // Ä³¸¯ÅÍ ÀÌµ¿
-            Vector2 movement = direction.normalized * moveSpeed;
-            rigid.velocity = movement;
-
-            // Ä³¸¯ÅÍ ¹æÇâ ÀüÈ¯
-            if (movement.x > 0 && characterDirection != -1)
+            // í„°ì¹˜ ì‹œì‘
+            if (touch.phase == TouchPhase.Began && !IsPointerOverUI(touch.position))
             {
-                characterDirection = -1;
-                FlipCharacter();
+                CreateJoystick(touch.position);
+                isJoystickActive = true;
+                joystickTouchStartPosition = touch.position;
             }
-            else if (movement.x < 0 && characterDirection != 1)
+            // í„°ì¹˜ ì´ë™
+            else if ((touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary) && isJoystickActive)
             {
-                characterDirection = 1;
-                FlipCharacter();
+                Vector2 currentTouchPosition = touch.position;
+                Vector2 direction = currentTouchPosition - joystickTouchStartPosition;
+                float distance = direction.magnitude;
+
+                // ì¡°ì´ìŠ¤í‹± í•¸ë“¤ ì´ë™
+                Vector2 handlePosition = direction.normalized * Mathf.Min(distance, handleMoveRadius);
+                if (joystickHandle != null)
+                    joystickHandle.rectTransform.anchoredPosition = handlePosition;
+
+                // ìºë¦­í„° ì´ë™
+                Vector2 movement = direction.normalized * moveSpeed;
+                rigid.velocity = movement;
+
+                // ìºë¦­í„° ë°©í–¥ ì „í™˜
+                if (movement.x > 0 && characterDirection != -1)
+                {
+                    characterDirection = -1;
+                    FlipCharacter();
+                }
+                else if (movement.x < 0 && characterDirection != 1)
+                {
+                    characterDirection = 1;
+                    FlipCharacter();
+                }
+            }
+            // í„°ì¹˜ ì¢…ë£Œ
+            else if ((touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled) && isJoystickActive)
+            {
+                DestroyJoystick();
+                rigid.velocity = Vector2.zero;
+                isJoystickActive = false;
             }
         }
-        // ¸¶¿ì½º Å¬¸¯ Á¾·á (Á¶ÀÌ½ºÆ½ Á¦°Å)
-        else if (Input.GetMouseButtonUp(0) && isJoystickActive)
+        // ë§ˆìš°ìŠ¤ ì…ë ¥ ì²˜ë¦¬ (ì—ë””í„°/ì‹œë®¬ë ˆì´í„°)
+        else
         {
-            DestroyJoystick();
-            rigid.velocity = Vector2.zero;
-            isJoystickActive = false;
+            // ë§ˆìš°ìŠ¤ í´ë¦­ ì‹œì‘ (ì¡°ì´ìŠ¤í‹± ìƒì„±)
+            if (Input.GetMouseButtonDown(0) && !IsPointerOverUI(Input.mousePosition))
+            {
+                CreateJoystick(Input.mousePosition);
+                isJoystickActive = true;
+                joystickTouchStartPosition = Input.mousePosition;
+            }
+            // ë§ˆìš°ìŠ¤ ë“œë˜ê·¸ (ì¡°ì´ìŠ¤í‹± ì¡°ì‘)
+            else if (Input.GetMouseButton(0) && isJoystickActive)
+            {
+                Vector2 currentTouchPosition = Input.mousePosition;
+                Vector2 direction = currentTouchPosition - joystickTouchStartPosition;
+                float distance = direction.magnitude;
+
+                // ì¡°ì´ìŠ¤í‹± í•¸ë“¤ ì´ë™
+                Vector2 handlePosition = direction.normalized * Mathf.Min(distance, handleMoveRadius);
+                if (joystickHandle != null)
+                    joystickHandle.rectTransform.anchoredPosition = handlePosition;
+
+                // ìºë¦­í„° ì´ë™
+                Vector2 movement = direction.normalized * moveSpeed;
+                rigid.velocity = movement;
+
+                // ìºë¦­í„° ë°©í–¥ ì „í™˜
+                if (movement.x > 0 && characterDirection != -1)
+                {
+                    characterDirection = -1;
+                    FlipCharacter();
+                }
+                else if (movement.x < 0 && characterDirection != 1)
+                {
+                    characterDirection = 1;
+                    FlipCharacter();
+                }
+            }
+            // ë§ˆìš°ìŠ¤ í´ë¦­ ì¢…ë£Œ (ì¡°ì´ìŠ¤í‹± ì œê±°)
+            else if (Input.GetMouseButtonUp(0) && isJoystickActive)
+            {
+                DestroyJoystick();
+                rigid.velocity = Vector2.zero;
+                isJoystickActive = false;
+            }
         }
+    }
+
+    // UI ìœ„ì— í¬ì¸í„°ê°€ ìˆëŠ”ì§€ í™•ì¸í•˜ëŠ” í—¬í¼ ë©”ì„œë“œ
+    private bool IsPointerOverUI(Vector2 screenPosition)
+    {
+        // EventSystemì´ ì—†ìœ¼ë©´ false ë°˜í™˜
+        if (EventSystem.current == null)
+            return false;
+
+        // í„°ì¹˜ ì…ë ¥ìš© í¬ì¸í„° ë°ì´í„° ìƒì„±
+        PointerEventData eventData = new PointerEventData(EventSystem.current);
+        eventData.position = screenPosition;
+
+        // ë ˆì´ìºìŠ¤íŠ¸ ê²°ê³¼ ë¦¬ìŠ¤íŠ¸
+        List<RaycastResult> results = new List<RaycastResult>();
+
+        // UI ë ˆì´ìºìŠ¤íŠ¸ ìˆ˜í–‰
+        EventSystem.current.RaycastAll(eventData, results);
+
+        return results.Count > 0;
     }
 
     void CreateJoystick(Vector2 screenPosition)
     {
         if (joystickPrefab != null)
         {
-            // Äµ¹ö½º ÂüÁ¶ °¡Á®¿À±â
+            // ìº”ë²„ìŠ¤ ì°¸ì¡° ê°€ì ¸ì˜¤ê¸°
             RectTransform canvasRect = GameObject.Find("Canvas").GetComponent<RectTransform>();
 
-            // ½ºÅ©¸° ÁÂÇ¥¸¦ Äµ¹ö½º ·ÎÄÃ ÁÂÇ¥·Î º¯È¯
+            // ìŠ¤í¬ë¦° ì¢Œí‘œë¥¼ ìº”ë²„ìŠ¤ ë¡œì»¬ ì¢Œí‘œë¡œ ë³€í™˜
             Vector2 localPointer;
             if (RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPosition, Camera.main, out localPointer))
             {
-                currentJoystick = Instantiate(joystickPrefab, canvasRect); // ºÎ¸ğ¸¦ ¸ÕÀú ¼³Á¤ÇÏ¿© ½ºÄÉÀÏ ¹®Á¦ ¹æÁö
-                currentJoystick.GetComponent<RectTransform>().anchoredPosition = localPointer; // Äµ¹ö½º ·ÎÄÃ ÁÂÇ¥ ¼³Á¤
+                currentJoystick = Instantiate(joystickPrefab, canvasRect); // ë¶€ëª¨ë¥¼ ë¨¼ì € ì„¤ì •í•˜ì—¬ ìŠ¤ì¼€ì¼ ë¬¸ì œ ë°©ì§€
+                currentJoystick.GetComponent<RectTransform>().anchoredPosition = localPointer; // ìº”ë²„ìŠ¤ ë¡œì»¬ ì¢Œí‘œ ì„¤ì •
 
-                // Á¶ÀÌ½ºÆ½ ÄÄÆ÷³ÍÆ® °¡Á®¿À±â
+                // ì¡°ì´ìŠ¤í‹± ì»´í¬ë„ŒíŠ¸ ê°€ì ¸ì˜¤ê¸°
                 joystickBackground = currentJoystick.GetComponent<Image>();
                 joystickHandle = currentJoystick.transform.GetChild(0).GetComponent<Image>();
 
-                // ÃÊ±â À§Ä¡ ¼³Á¤
+                // ì´ˆê¸° ìœ„ì¹˜ ì„¤ì •
                 joystickHandle.rectTransform.anchoredPosition = Vector2.zero;
             }
         }
@@ -168,6 +245,17 @@ public class Asteroid_Character : MonoBehaviour
             AudioManager.instance.PlaySFX(AudioManager.SFXClip.SUCCESS);
             Destroy(other.gameObject);
             Asteroid_Manager.instance.GetCoin();
+        }
+    }
+
+    // ê²Œì„ì˜¤ë²„ ì‹œ ì¡°ì´ìŠ¤í‹± ê°•ì œ ì œê±°ìš© public ë©”ì„œë“œ
+    public void ForceDestroyJoystick()
+    {
+        if (isJoystickActive)
+        {
+            DestroyJoystick();
+            rigid.velocity = Vector2.zero;
+            isJoystickActive = false;
         }
     }
 }
