@@ -921,11 +921,11 @@ PlayerSettings:
   apiCompatibilityLevel: 6
   activeInputHandler: 0
   windowsGamepadBackendHint: 0
-  cloudProjectId: b987f343-5b47-4cce-94dc-59c9936748a4
+  cloudProjectId: 2777da11-aeab-4ee8-9513-5a86312878b7
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: MyShipPJ
-  organizationId: vavamva0117
+  projectName: MyShipPJ 2025-09-30_04-35-00
+  organizationId: baegeunho
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}
