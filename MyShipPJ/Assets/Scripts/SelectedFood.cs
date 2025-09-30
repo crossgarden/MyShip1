@@ -130,6 +130,10 @@ public class SelectedFood : MonoBehaviour
             UIManager.instance.CharacterFavorUp(food.favor);
             UIManager.instance.CharacterFullnessUp(food.fullness);
 
+
+            //애니메이션 재생
+            TriggerTouchAnimation();
+
             // 먹인 후 - 음식
             gameObject.SetActive(false);
             UIManager.instance.FoodChange(food);
@@ -152,6 +156,23 @@ public class SelectedFood : MonoBehaviour
 
             AudioManager.instance.PlaySFX(AudioManager.SFXClip.FAIL);
             gameObject.transform.position = initPos;
+        }
+    }
+
+    //애니메이션 메서드 추가
+    void TriggerTouchAnimation()
+    {
+        // CharacterContainer 찾기
+        GameObject characterContainer = GameObject.Find("CharacterContainer");
+        if (characterContainer != null && characterContainer.transform.childCount > 0)
+        {
+            Transform character = characterContainer.transform.GetChild(0);
+            Animator animator = character.GetComponent<Animator>();
+
+            if (animator != null)
+            {
+                animator.SetTrigger("Touch");
+            }
         }
     }
 
