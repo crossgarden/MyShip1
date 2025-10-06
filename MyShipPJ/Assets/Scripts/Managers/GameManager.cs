@@ -34,10 +34,15 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        if (PlayerPrefs.GetInt("Intro", 1) == 1)
+            SceneManager.LoadScene("IntroScene");
+
     }
 
     private void Start()
     {
+
         CharacterInit();
         InitFullness();
         StartCoroutine(DecayFullness());
