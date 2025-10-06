@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
 using GameData;
+using System.Collections.Generic;
 
 public class ColorManager : MonoBehaviour
 {
@@ -14,7 +15,7 @@ public class ColorManager : MonoBehaviour
 
     [Header("GameTopBar")]
     public GameObject gameTopBar;
-    public TextMeshProUGUI scoreTxt, coinTxt, overCoinTxt; // 코인 표시용 텍스트 추가
+    public TextMeshProUGUI scoreTxt, coinTxt, overCoinTxt, overHighScoreTxt; // 코인 표시용 텍스트 추가
     int coin = 0;  // 코인 변수 추가
     public int score = 0;
 
@@ -161,7 +162,25 @@ public class ColorManager : MonoBehaviour
         returnBtn.SetActive(!isFail);
 
         overScoreTxt.text = "점수: " + score;
-        HighScoreTxt.text = "최고: " + game.high_score;
+        List<(string name, int score)> rankList = new List<(string, int)>
+{
+    (game.other_name, game.other_score),
+    (game.other1_name, game.other1_score),
+    ("나", game.high_score)
+};
+
+        // 점수 내림차순 정렬
+        rankList.Sort((a, b) => b.score.CompareTo(a.score));
+
+        // 출력 문자열 생성
+        string rankText = "점수 순위\n\n";
+        for (int i = 0; i < rankList.Count; i++)
+        {
+            rankText += $"{i + 1}위 {rankList[i].name} : {rankList[i].score}\n";
+        }
+
+        overHighScoreTxt.text = rankText;
+
 
         // 코인 텍스트도 함께 표시
         if (overCoinTxt != null)
