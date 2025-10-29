@@ -28,7 +28,7 @@ public class SnakeManager : MonoBehaviour
 
     [Header("Pause & GameOver")]
     public GameObject gameOverPanel, reStartBtn, returnBtn;
-    public TextMeshProUGUI overTxt, overScoreTxt, HighScoreTxt,overCoinTxt;
+    public TextMeshProUGUI overTxt, overScoreTxt, HighScoreTxt,overCoinTxt, overHighScoreTxt;
     public bool pause = false;
     
     public GameObject foodPrefab;
@@ -93,8 +93,27 @@ public class SnakeManager : MonoBehaviour
         returnBtn.SetActive(!isFail);
 
         overScoreTxt.text = "점수: " + score;
-        HighScoreTxt.text = "최고: " + game.high_score;
         overCoinTxt.text = "" + coin;
+
+        // 점수 순위 
+        List<(string name, int score)> rankList = new List<(string, int)>
+{
+    (game.other_name, game.other_score),
+    (game.other1_name, game.other1_score),
+    ("나", game.high_score)
+};
+
+        // 점수 내림차순 정렬
+        rankList.Sort((a, b) => b.score.CompareTo(a.score));
+
+        // 출력 문자열 생성
+        string rankText = "점수 순위\n\n";
+        for (int i = 0; i < rankList.Count; i++)
+        {
+            rankText += $"{i + 1}위 {rankList[i].name} : {rankList[i].score}\n";
+        }
+
+        overHighScoreTxt.text = rankText;
 
         gameOverPanel.SetActive(true);
         DataManager.instance.saveData();
