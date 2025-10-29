@@ -97,5 +97,6 @@ namespace GameData
         public string kr_name;
         public string descript;
         public int high_score;
+
     }
 }
